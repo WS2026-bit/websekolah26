@@ -262,6 +262,47 @@ const Store = {
     return U.readFileAsDataURL(file);
   },
 
+  /* ---------- DOKUMEN PPDB (pendaftar publik) ---------- */
+  /* Berkas diunggah DULU ke Storage folder admissions/ — kalau gagal, tidak ada
+     baris DB yang tertulis (pendaftar bisa ulang tanpa data dobel). Metadata ke
+     tabel admission_documents baru ditulis SETELAH baris admissions terbentuk. */
+  async uploadAdmissionFiles(regNumber, docs) {
+    if (this.mode !== 'supabase' || !this.client) return null;
+    const cfg = window.SUPABASE_CONFIG;
+    const bucket = cfg.storageBucket || 'school-media';
+    const rows = [];
+    for (const [docType, d] of Object.entries(docs || {})) {
+      if (!d || !d.data) continue;
+      const blob = await (await fetch(d.data)).blob();  // dataURL -> Blob
+      const ext = (String(d.name || '').split('.').pop() || 'bin').toLowerCase().slice(0, 5);
+      const path = `admissions/${regNumber}/${docType}-${Date.now()}-${U.uid('doc')}.${ext}`;
+      const { error } = await this.client.storage.from(bucket).upload(path, blob, {
+        contentType: d.type || 'application/octet-stream',
+      });
+      if (error) throw new Error('Unggah dokumen "' + docType + '" gagal: ' + error.message);
+      rows.push({
+        id: U.uid('doc'),
+        admission_id: null,   // diisi oleh attachAdmissionDocs()
+        doc_type: docType,
+        file_name: d.name || docType,
+        file_type: d.type || null,
+        file_size: d.size || null,
+        storage_path: path,
+        created_at: new Date().toISOString(),
+      });
+    }
+    return rows;
+  },
+
+  async attachAdmissionDocs(rows, admissionId) {
+    if (!rows || !rows.length || this.mode !== 'supabase' || !this.client) return;
+    for (const r of rows) {
+      r.admission_id = admissionId;
+      const { error } = await this.client.from('admission_documents').insert(r);
+      if (error) throw new Error('Simpan metadata dokumen gagal: ' + error.message);
+    }
+  },
+
   /* ---------- REG NUMBER PPDB ---------- */
   async nextRegNumber(tahunAjaran = '2027') {
     const { rows } = await this.list('admissions', { perPage: 0 });

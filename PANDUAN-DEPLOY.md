@@ -272,6 +272,7 @@ Kalau 5-5-nya lolos → database benar-benar online, tersimpan otomatis, dan lin
 | Upload gambar gagal | File > 2 MB / bukan JPG-PNG-WebP-PDF | Kompres dulu; batas memang 2 MB |
 | Supabase "project paused" | Paket gratis berhenti setelah 7 hari tanpa aktivitas | Tekan **Restore** di dashboard Supabase; aktifkan dengan buka website secara rutin |
 | SQL error `23502 … null value in column "created_at"` saat Run schema | Memakai versi `schema.sql` lama (data seed mengisi `created_at` dengan NULL) | Gunakan `database/schema.sql` **terbaru** dari paket ini, salin ulang **seluruh** isinya, klik **Run** sekali lagi — aman karena skrip idempoten dan transaksi yang gagal otomatis di-roll back |
+| Kirim PPDB gagal: `Could not find the 'documents' column of 'admissions'` | Memakai `assets/js/ppdb.js` **lama** — mengirim field `documents` ke tabel admissions (kolom itu memang tidak ada; dokumen disimpan di Storage + tabel admission_documents) | Unggah ulang `assets/js/ppdb.js` **dan** `assets/js/store.js` **terbaru** ke repo → tunggu deployment → `Ctrl+Shift+R` → daftar ulang. Lalu jalankan blok SQL darurat di bawah tabel ini (untuk izin unggah dokumen pendaftar) |
 | Kirim Jejak Alumni / Pesan Kontak gagal: `new row violates row-level security policy` | Memakai `assets/js/store.js` **lama** — insert memakai `.select()` sehingga baris baru (status `menunggu`) ditolak policy SELECT publik | Unggah ulang `assets/js/store.js` **terbaru** ke repo → tunggu deployment → `Ctrl+Shift+R`. Kalau masih gagal, jalankan blok SQL darurat di bawah tabel ini |
 | Ganti password DB Supabase | — | Jangan diubah sembarangan; berdampak koneksi. Kalau terlanjur: Settings → Database → Reset database password tidak mempengaruhi anon key |
 
@@ -294,6 +295,17 @@ create policy "public_insert_messages" on public.messages
 drop policy if exists "public_insert_admissions" on public.admissions;
 create policy "public_insert_admissions" on public.admissions
   for insert to anon, authenticated with check (true);
+
+-- Izin unggah dokumen PPDB (folder admissions/, maks 2 MB per berkas)
+drop policy if exists "public_upload_admissions" on storage.objects;
+create policy "public_upload_admissions" on storage.objects for insert to anon, authenticated
+  with check (bucket_id = 'school-media' and (storage.foldername(name))[1] = 'admissions');
+
+drop policy if exists "public_insert_admdoc" on public.admission_documents;
+create policy "public_insert_admdoc" on public.admission_documents
+  for insert to anon, authenticated with check (true);
+
+update storage.buckets set file_size_limit = 2097152 where id = 'school-media';
 ```
 
 ---

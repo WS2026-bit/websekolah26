@@ -525,6 +525,21 @@ drop policy if exists "staff_delete_media" on storage.objects;
 create policy "staff_delete_media" on storage.objects for delete to authenticated
   using (bucket_id = 'school-media' and public.current_role() in ('admin','editor'));
 
+-- ---- Dokumen PPDB dari pendaftar publik ----
+-- Pendaftar (anon) boleh mengunggah berkas HANYA di folder admissions/ bucket
+-- school-media; batas ukuran per file 2 MB diatur di level bucket. Metadata
+-- berkas dicatat frontend ke tabel admission_documents setelah baris
+-- admissions terbentuk (butuh policy insert di bawah).
+drop policy if exists "public_upload_admissions" on storage.objects;
+create policy "public_upload_admissions" on storage.objects for insert to anon, authenticated
+  with check (bucket_id = 'school-media' and (storage.foldername(name))[1] = 'admissions');
+
+drop policy if exists "public_insert_admdoc" on public.admission_documents;
+create policy "public_insert_admdoc" on public.admission_documents for insert to anon, authenticated
+  with check (true);
+
+update storage.buckets set file_size_limit = 2097152 where id = 'school-media';  -- 2 MB/file
+
 -- ============================================================================
 -- SEED AWAL (contoh — sesuaikan dengan data sekolah Anda)
 -- ============================================================================

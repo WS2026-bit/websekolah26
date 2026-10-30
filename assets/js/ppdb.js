@@ -188,10 +188,16 @@ const Ppdb = {
           parent_name: data.parent_name.trim(),
           parent_phone: data.parent_phone.trim(),
           parent_email: data.parent_email.trim(),
-          documents: Object.values(this.docs),
           status: 'menunggu', verified: false, notes: '',
         };
-        await Store.insert('admissions', payload);
+        // PENTING: field "documents" TIDAK dikirim ke tabel admissions (kolom
+        // itu tidak ada di Supabase). Berkas diunggah dulu ke Storage folder
+        // admissions/ — gagal di sini = tidak ada baris DB tertulis — lalu
+        // metadata disimpan ke tabel admission_documents setelah pendaftaran
+        // terbentuk. Di mode demo berkas tetap tersimpan lokal via Store.
+        const docRows = await Store.uploadAdmissionFiles(reg, this.docs);
+        const row = await Store.insert('admissions', payload);
+        await Store.attachAdmissionDocs(docRows, row.id);
         this.showReceipt(payload);
         U.logActivity?.('PPDB: Pendaftaran baru', reg + ' — ' + payload.full_name);
       } catch (err) {
