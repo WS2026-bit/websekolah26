@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Program pendidikan SIT Al-Ihsan: akademik, Tahfizh Al-Qur'an, pembinaan karakter, kepemimpinan, bahasa, internasional, ekstrakurikuler, dan boarding school.">
+  <meta property="og:title" content="Program Pendidikan — SIT Al-Ihsan">
+  <meta property="og:type" content="website">
+  <title>Program Pendidikan — SIT Al-Ihsan</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="program">
+
+  <header id="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero__bg"><img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/e403e459a6ff.jpg" alt="" loading="lazy"></div>
+      <div class="container">
+        <div id="page-breadcrumb"></div>
+        <h1>Program Pendidikan</h1>
+        <p>Kurikulum terpadu: akademik unggulan, Tahfizh Al-Qur'an 30 juz, pembinaan karakter, kepemimpinan, bahasa aktif, hingga program internasional.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="gfilters" id="program-filters" role="tablist" aria-label="Filter program"></div>
+        <div class="grid grid--3" id="program-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="config/supabase.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data-seed.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () =>
+      Pages.boot({ page: 'program', pageTitle: 'Program Pendidikan', breadcrumb: [{ label: 'Program Pendidikan' }] }));
+  </script>
+</body>
+</html>

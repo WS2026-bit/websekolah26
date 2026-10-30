@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Informasi akademik SIT Al-Ihsan: kurikulum, kalender akademik, jadwal pembelajaran, metode pembelajaran, sistem penilaian, dan program pengembangan siswa.">
+  <meta property="og:title" content="Akademik — SIT Al-Ihsan">
+  <meta property="og:type" content="website">
+  <title>Akademik — SIT Al-Ihsan</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="akademik">
+
+  <header id="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero__bg"><img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/4bdfada549db.jpg" alt="" loading="lazy"></div>
+      <div class="container">
+        <div id="page-breadcrumb"></div>
+        <h1>Akademik</h1>
+        <p>Kurikulum, kalender akademik, metode pembelajaran, sistem penilaian, dan program pengembangan siswa.</p>
+      </div>
+    </section>
+
+    <!-- KURIKULUM -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal">Kurikulum</span>
+          <h2 class="section-title reveal">Struktur Kurikulum Terpadu</h2>
+          <p class="section-desc reveal">Tiga pilar kurikulum yang saling menguatkan: nasional, internasional, dan keislaman.</p>
+        </div>
+        <div class="grid grid--3">
+          <div class="vm-card reveal">
+            <div class="vm-card__icon"><i data-lucide="flag"></i></div>
+            <h3>Kurikulum Merdeka</h3>
+            <p>Dasar pembelajaran sesuai standar nasional dengan fokus projek penguatan profil pelajar Pancasila (p5), literasi, dan numerasi.</p>
+          </div>
+          <div class="vm-card reveal" data-delay="1">
+            <div class="vm-card__icon"><i data-lucide="globe-2"></i></div>
+            <h3>Cambridge Enrichment</h3>
+            <p>English, Mathematics, dan Science dengan standar Cambridge — menyiapkan siswa pada kompetisi dan studi lanjut internasional.</p>
+          </div>
+          <div class="vm-card reveal" data-delay="2">
+            <div class="vm-card__icon"><i data-lucide="book-open-text"></i></div>
+            <h3>Kurikulum Tahfizh</h3>
+            <p>Kurikulum hafalan berjenjang dengan target 30 juz, setoran harian, halaqah pekanan, dan ujian tasmi' setiap 5 juz.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JADWAL PEMBELAJARAN -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal">Kegiatan Harian</span>
+          <h2 class="section-title reveal">Jadwal Pembelajaran (Santri Asrama)</h2>
+        </div>
+        <div class="table-wrap reveal">
+          <table class="table">
+            <thead><tr><th>Waktu</th><th>Aktivitas</th></tr></thead>
+            <tbody>
+              <tr><td><strong>03.45 – 04.30</strong></td><td>Bangun, persiapan &amp; shalat Subuh berjamaah</td></tr>
+              <tr><td><strong>04.30 – 05.30</strong></td><td>Setoran hafalan pagi (muhasabah 1 halaman)</td></tr>
+              <tr><td><strong>05.30 – 06.30</strong></td><td>Olahraga pagi &amp; piket kebersihan</td></tr>
+              <tr><td><strong>06.45 – 07.15</strong></td><td>Sarapan &amp; persiapan sekolah</td></tr>
+              <tr><td><strong>07.15 – 07.45</strong></td><td>Apel pagi, tilawah &amp; pembinaan karakter</td></tr>
+              <tr><td><strong>07.45 – 15.00</strong></td><td>KBM utama (Kurikulum Merdeka + Cambridge)</td></tr>
+              <tr><td><strong>15.30 – 17.00</strong></td><td>Ekstrakurikuler / Tahsin bahasa Arab–Inggris</td></tr>
+              <tr><td><strong>19.30 – 21.00</strong></td><td>Halaqah muroja'ah malam &amp; belajar mandiri</td></tr>
+              <tr><td><strong>21.30</strong></td><td>Istirahat (lampu mati)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="small mt-1 muted">Jadwal siswa non-asrama mengikuti jam sekolah 07.15–15.00 dengan opsi tahsin sore.</p>
+      </div>
+    </section>
+
+    <!-- KALENDER AKADEMIK -->
+    <section class="section" id="kalender">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal">Agenda</span>
+          <h2 class="section-title reveal">Kalender Akademik Terdekat</h2>
+          <p class="section-desc reveal">Agenda akademik dan kesiswaan semester berjalan (TA 2026/2027).</p>
+        </div>
+        <div class="grid" style="gap:14px" id="akademik-calendar"></div>
+      </div>
+    </section>
+
+    <!-- METODE & PENILAIAN -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="grid grid--2">
+          <div>
+            <span class="eyebrow reveal">Metode</span>
+            <h2 class="section-title reveal">Cara Kami Mengajar</h2>
+            <div class="grid" style="gap:14px">
+              <div class="fcard reveal"><div class="fcard__icon"><i data-lucide="flask-conical"></i></div><div><h4>Project Based Learning</h4><p>Proyek lintas disiplin tiap semester, dipresentasikan pada Science &amp; Art Fair.</p></div></div>
+              <div class="fcard reveal" data-delay="1"><div class="fcard__icon"><i data-lucide="users"></i></div><div><h4>Diskusi &amp; Kolaborasi</h4><p>Kelas kecil maksimal 24 siswa untuk interaksi mendalam antara guru dan siswa.</p></div></div>
+              <div class="fcard reveal" data-delay="2"><div class="fcard__icon"><i data-lucide="languages"></i></div><div><h4>Imersi Dwibahasa</h4><p>Speaking zone, English Day &amp; Arabic Day untuk membiasakan bahasa secara aktif.</p></div></div>
+              <div class="fcard reveal" data-delay="3"><div class="fcard__icon"><i data-lucide="repeat"></i></div><div><h4>Habit Formation</h4><p>Pembiasaan ibadah &amp; adab harian melalui habit tracking yang dipantau pembina.</p></div></div>
+            </div>
+          </div>
+          <div>
+            <span class="eyebrow reveal">Penilaian</span>
+            <h2 class="section-title reveal">Sistem Penilaian</h2>
+            <div class="vm-card reveal">
+              <div class="vm-card__icon"><i data-lucide="clipboard-check"></i></div>
+              <h3>Penilaian Berbasis Portofolio</h3>
+              <p style="margin-bottom:14px">Perkembangan siswa diukur menyeluruh dan transparan melalui:</p>
+              <ul class="mlist">
+                <li>Penilaian formatif harian &amp; sumatif tengah/akhir semester.</li>
+                <li>Portofolio proyek p5 dan karya siswa.</li>
+                <li>Capaian hafalan &amp; ujian tasmi' Al-Qur'an.</li>
+                <li>Habit tracking ibadah, adab, dan kemandirian.</li>
+                <li>Portofolio digital yang dapat diakses orang tua kapan saja.</li>
+              </ul>
+            </div>
+            <div class="vm-card reveal mt-3" data-delay="1">
+              <div class="vm-card__icon"><i data-lucide="rocket"></i></div>
+              <h3>Program Pengembangan Siswa</h3>
+              <ul class="mlist">
+                <li>Klub sains, matematika &amp; robotika menuju OSN/KSM.</li>
+                <li>Bimbingan studi lanjut (SNBP, SNBT, beasiswa dalam/luar negeri).</li>
+                <li>Kelas persiapan tes bahasa (Cambridge &amp; MOFA Arab).</li>
+                <li>Pendampingan BK personal &amp; karier.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="config/supabase.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data-seed.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () =>
+      Pages.boot({ page: 'akademik', pageTitle: 'Akademik', breadcrumb: [{ label: 'Akademik' }] }));
+  </script>
+</body>
+</html>

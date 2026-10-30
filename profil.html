@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Profil SIT Al-Ihsan: sejarah, visi misi, nilai organisasi, struktur organisasi, profil pimpinan, guru, dan fasilitas sekolah.">
+  <meta property="og:title" content="Profil Sekolah — SIT Al-Ihsan">
+  <meta property="og:type" content="website">
+  <title>Profil Sekolah — SIT Al-Ihsan</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="profil">
+
+  <header id="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero__bg"><img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/983dd8d2e7bf.jpg" alt="" loading="lazy"></div>
+      <div class="container">
+        <div id="page-breadcrumb"></div>
+        <h1>Profil Sekolah</h1>
+        <p>Mengenal lebih dekat SIT Al-Ihsan: sejarah, identitas, visi misi, struktur organisasi, pendidik, dan fasilitas.</p>
+      </div>
+    </section>
+
+    <!-- SEJARAH -->
+    <section class="section" id="sejarah">
+      <div class="container">
+        <div class="grid grid--2" style="align-items:start">
+          <div id="history">
+            <span class="eyebrow reveal">Sejarah</span>
+            <h2 class="section-title reveal">Perjalanan <span class="gold-underline">22 Tahun</span> Mendidik</h2>
+            <div class="history-text reveal mt-2"></div>
+          </div>
+          <div id="history-timeline" class="timeline" style="margin-top:0"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IDENTITAS + VISI MISI -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow reveal">Identitas &amp; Arah</span>
+          <h2 class="section-title reveal">Visi, Misi &amp; Tujuan Pendidikan</h2>
+        </div>
+        <div class="grid grid--2 mb-3" id="visi-misi">
+          <div class="vm-card reveal">
+            <div class="vm-card__icon"><i data-lucide="eye"></i></div>
+            <h3>Visi</h3>
+            <div class="vm-vision"></div>
+          </div>
+          <div class="vm-card reveal" data-delay="1">
+            <div class="vm-card__icon"><i data-lucide="target"></i></div>
+            <h3>Misi</h3>
+            <div class="vm-mission"></div>
+          </div>
+        </div>
+        <div class="vm-card reveal" style="margin-bottom:34px">
+          <div class="vm-card__icon"><i data-lucide="crosshair"></i></div>
+          <h3>Tujuan Pendidikan</h3>
+          <div id="goals"></div>
+        </div>
+        <div class="section-head" style="margin-bottom:28px">
+          <h2 class="section-title" style="font-size:26px">Nilai-Nilai Organisasi</h2>
+        </div>
+        <div class="grid grid--3" id="values" style="margin-top:-14px"></div>
+      </div>
+    </section>
+
+    <!-- STRUKTUR ORGANISASI -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow reveal">Tata Kelola</span>
+          <h2 class="section-title reveal">Struktur Organisasi</h2>
+        </div>
+        <div id="org-chart" style="overflow-x:auto"></div>
+      </div>
+    </section>
+
+    <!-- GURU & TENAGA KEPENDIDIKAN -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal">SDM Pendidik</span>
+          <h2 class="section-title reveal">Pimpinan Sekolah</h2>
+        </div>
+        <div class="grid grid--4" id="staff-pimpinan"></div>
+        <div class="section-head mt-4">
+          <h2 class="section-title" style="font-size:26px">Guru &amp; Tenaga Kependidikan</h2>
+        </div>
+        <div class="grid grid--4" id="staff-guru"></div>
+      </div>
+    </section>
+
+    <!-- FASILITAS -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal">Sarana Prasarana</span>
+          <h2 class="section-title reveal">Fasilitas Sekolah</h2>
+          <p class="section-desc reveal">Lingkungan belajar yang aman, nyaman, dan mendukung seluruh program pendidikan.</p>
+        </div>
+        <div class="grid grid--2" id="facilities"></div>
+      </div>
+    </section>
+
+    <!-- SEBARAN ALUMNI (BUKTI MUTU LULUSAN) -->
+    <section class="section section--alt" id="alumni">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow reveal">Bukti Mutu Lulusan</span>
+          <h2 class="section-title reveal">Sebaran <span class="gold-underline">Alumni</span></h2>
+          <p class="section-desc reveal">Jejak nyata lulusan Al-Ihsan: diterima di perguruan tinggi ternama dalam dan luar negeri, serta berkarya dan berkhidmat untuk umat.</p>
+        </div>
+        <div id="alumni-panel"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="config/supabase.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data-seed.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () =>
+      Pages.boot({ page: 'profil', pageTitle: 'Profil Sekolah', breadcrumb: [{ label: 'Profil Sekolah' }] }));
+  </script>
+</body>
+</html>

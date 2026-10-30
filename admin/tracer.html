@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Jejak Alumni — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div class="mode-note">
+          <i data-lucide="user-search"></i>
+          <span>Rekap formulir <b>Mencari Jejak Alumni</b> (tracer-alumni.html) — alumni yang putus kontak mendaftarkan dirinya sendiri.
+          Periksa data, lalu klik <b>Verifikasi</b> agar masuk rekap resmi. Gunakan <b>Ekspor CSV</b> untuk pengolahan lebih lanjut.</span>
+        </div>
+
+        <div class="stat-cards" id="tracer-stats"></div>
+        <div id="tracer-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'tracer', title: 'Jejak Alumni (Tracer)' })) return;
+      U.refreshIcons();
+
+      const ST = [
+        { v: 'menunggu', l: 'Menunggu' },
+        { v: 'terverifikasi', l: 'Terverifikasi' },
+        { v: 'arsip', l: 'Arsip' },
+      ];
+      const JENJANG = ['TKIT', 'SDIT', 'SMPIT', 'SMAIT'].map(j => ({ v: j, l: j }));
+      const STATUS_KINI = [
+        { v: 'kuliah', l: 'Kuliah' },
+        { v: 'beasiswa', l: 'Beasiswa / Studi Lanjut' },
+        { v: 'bekerja', l: 'Bekerja' },
+        { v: 'wirausaha', l: 'Wirausaha' },
+        { v: 'lainnya', l: 'Lainnya' },
+      ];
+
+      /* ---------- Kartu ringkasan ---------- */
+      const renderStats = async () => {
+        const [nTotal, nWait, nVer, nMentor] = await Promise.all([
+          Store.count('tracer_alumni'),
+          Store.count('tracer_alumni', { status: 'menunggu' }),
+          Store.count('tracer_alumni', { status: 'terverifikasi' }),
+          Store.count('tracer_alumni', { willing_mentor: true, status: 'terverifikasi' }),
+        ]);
+        document.getElementById('tracer-stats').innerHTML = `
+          <div class="scard"><div class="scard__icon i-gold"><i data-lucide="inbox"></i></div>
+            <div><b>${U.fmtNum(nTotal)}</b><span>Total Kiriman</span></div></div>
+          <div class="scard"><div class="scard__icon i-red"><i data-lucide="hourglass"></i></div>
+            <div><b>${U.fmtNum(nWait)}</b><span>Menunggu Verifikasi</span></div></div>
+          <div class="scard"><div class="scard__icon i-green"><i data-lucide="user-check"></i></div>
+            <div><b>${U.fmtNum(nVer)}</b><span>Terverifikasi (masuk rekap)</span></div></div>
+          <div class="scard"><div class="scard__icon i-blue"><i data-lucide="handshake"></i></div>
+            <div><b>${U.fmtNum(nMentor)}</b><span>Bersedia Jadi Mentor</span></div></div>`;
+        U.refreshIcons(document.getElementById('tracer-stats'));
+      };
+      await renderStats();
+
+      /* ---------- Tabel tracer ---------- */
+      const tbl = Admin.table('tracer-table', {
+        table: 'tracer_alumni', title: 'Jejak Alumni',
+        detail: true,
+        searchKeys: ['full_name', 'institution', 'whatsapp', 'email', 'major_position', 'city_country'],
+        filters: [
+          { key: 'status', label: 'Verifikasi', options: ST },
+          { key: 'jenjang', label: 'Jenjang', options: JENJANG },
+          { key: 'current_status', label: 'Status Kini', options: STATUS_KINI },
+        ],
+        columns: [
+          { key: 'full_name', label: 'Nama Alumni', type: 'main', sub: 'institution' },
+          { key: 'angkatan', label: 'Angkatan', render: r => `<span class="badge badge--green">${U.esc(r.jenjang)}</span> <b>${U.esc(String(r.grad_year || '-'))}</b>` },
+          { key: 'kontak', label: 'Kontak', render: r => `
+            <div><div class="cell-main" style="max-width:170px"><a href="${U.esc(U.waLink(r.whatsapp, 'Assalamualaikum ' + U.esc(r.full_name) + ', kami dari Alumni SIT Al-Ihsan…'))}" target="_blank" rel="noopener" title="Chat WhatsApp">${U.esc(r.whatsapp)}</a></div>
+            <div class="cell-sub" style="max-width:170px">${U.esc(r.email || '-')}</div></div>` },
+          { key: 'current_status', label: 'Status Kini', type: 'badge',
+            badgeMap: { kuliah: 'badge--info', beasiswa: 'badge--gold', bekerja: 'badge--green', wirausaha: 'badge--success', lainnya: 'badge--warning' },
+            labels: { kuliah: 'Kuliah', beasiswa: 'Beasiswa/Studi', bekerja: 'Bekerja', wirausaha: 'Wirausaha', lainnya: 'Lainnya' } },
+          { key: 'verifikasi', label: 'Verifikasi', render: r => r.status === 'menunggu'
+            ? `<button type="button" class="btn btn--primary btn--sm" data-verify="${U.esc(r.id)}" title="Setujui & masukkan ke rekap resmi"><i data-lucide="user-check"></i>Verifikasi</button>`
+            : (r.status === 'terverifikasi'
+              ? '<span class="badge badge--success"><i data-lucide="check"></i>Selesai</span>'
+              : '<span class="badge badge--info">Diarsipkan</span>') },
+          { key: 'created_at', label: 'Dikirim', type: 'datetime' },
+        ],
+        fields: [
+          { key: 'full_name', label: 'Nama Lengkap', required: true, min: 3 },
+          { key: 'jenjang', label: 'Jenjang Lulus', type: 'select', required: true, options: JENJANG },
+          { key: 'grad_year', label: 'Tahun Lulus', type: 'number', required: true, min: 2003, max: 2100 },
+          { key: 'whatsapp', label: 'No. WhatsApp', required: true },
+          { key: 'email', label: 'Email' },
+          { key: 'current_status', label: 'Status Saat Ini', type: 'select', required: true, options: STATUS_KINI },
+          { key: 'institution', label: 'Kampus / Perusahaan / Instansi', required: true },
+          { key: 'major_position', label: 'Jurusan / Posisi' },
+          { key: 'city_country', label: 'Kota / Negara' },
+          { key: 'hafiz_juz', label: 'Hafalan (juz)', type: 'number', min: 0, max: 30 },
+          { key: 'willing_mentor', label: 'Bersedia menjadi kontak/mentor alumni', type: 'checkbox' },
+          { key: 'status', label: 'Status Verifikasi', type: 'select', required: true, options: ST },
+          { key: 'message', label: 'Pesan Alumni', type: 'textarea' },
+          { key: 'admin_notes', label: 'Catatan Internal Sekolah', type: 'textarea' },
+        ],
+      });
+
+      /* ---------- Verifikasi cepat satu klik ---------- */
+      document.getElementById('tracer-table').addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-verify]');
+        if (!btn) return;
+        const row = tbl.rows.find(r => String(r.id) === String(btn.dataset.verify));
+        if (!row) return;
+        btn.disabled = true;
+        try {
+          await Store.update('tracer_alumni', row.id, { status: 'terverifikasi', verified_at: new Date().toISOString() });
+          U.logActivity('Verifikasi Jejak Alumni', row.full_name);
+          U.toast(`Data "${U.truncate(row.full_name, 40)}" terverifikasi & masuk rekap resmi`);
+          await tbl.load();
+          await renderStats();
+        } catch (err) {
+          U.toast('Gagal memverifikasi: ' + err.message, 'error');
+          btn.disabled = false;
+        }
+      });
+
+      /* ---------- Ekspor CSV (rekap resmi) ---------- */
+      /* Toolbar dibangun asinkron oleh AdminTable — tunggu elemen pemisah siap */
+      const waitEl = (sel, ms = 4000) => new Promise(res => {
+        const t0 = Date.now();
+        (function poll() {
+          const el = document.querySelector(sel);
+          if (el) return res(el);
+          if (Date.now() - t0 > ms) return res(null);
+          setTimeout(poll, 60);
+        })();
+      });
+      const spacer = await waitEl('#tracer-table .toolbar span[style*="flex"]');
+      if (spacer) {
+        spacer.insertAdjacentHTML('beforebegin',
+          `<button type="button" class="btn btn--outline btn--sm" data-export-csv><i data-lucide="download"></i>Ekspor CSV</button>`);
+        document.querySelector('[data-export-csv]').addEventListener('click', async () => {
+          const { rows } = await Store.list('tracer_alumni', { orderBy: 'created_at', orderDir: 'desc', perPage: 0 });
+          U.csvDownload('rekap-jejak-alumni.csv', [
+            ['Nama', 'Jenjang', 'Tahun Lulus', 'WhatsApp', 'Email', 'Status Kini', 'Instansi', 'Jurusan/Posisi', 'Kota/Negara', 'Juz', 'Bersedia Mentor', 'Verifikasi', 'Pesan Alumni', 'Catatan Internal', 'Dikirim', 'Diverifikasi'],
+            ...rows.map(r => [
+              r.full_name, r.jenjang, r.grad_year, r.whatsapp, r.email || '', r.current_status, r.institution,
+              r.major_position || '', r.city_country || '', r.hafiz_juz ?? '',
+              r.willing_mentor ? 'Ya' : 'Tidak', r.status,
+              String(r.message || '').replace(/\s+/g, ' ').trim(),
+              String(r.admin_notes || '').replace(/\s+/g, ' ').trim(),
+              U.fmtDateTime(r.created_at), r.verified_at ? U.fmtDateTime(r.verified_at) : '',
+            ]),
+          ]);
+          U.logActivity('Ekspor Jejak Alumni', rows.length + ' baris CSV');
+        });
+        U.refreshIcons(spacer.parentElement);
+      }
+
+      U.refreshIcons();
+    })();
+  </script>
+</body>
+</html>

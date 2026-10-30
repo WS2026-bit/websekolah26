@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hubungi SIT Al-Ihsan: alamat, peta lokasi, WhatsApp, email, media sosial, dan formulir pesan.">
+  <meta property="og:title" content="Kontak — SIT Al-Ihsan">
+  <meta property="og:type" content="website">
+  <title>Kontak — SIT Al-Ihsan</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="kontak">
+
+  <header id="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero__bg"><img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/43f621299144.jpg" alt="" loading="lazy"></div>
+      <div class="container">
+        <div id="page-breadcrumb"></div>
+        <h1>Hubungi Kami</h1>
+        <p>Kami siap membantu pertanyaan Anda tentang pendidikan putra-putri Anda.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="grid grid--2" style="align-items:start">
+          <div>
+            <div class="grid" style="gap:14px" id="contact-info"></div>
+            <div class="mt-3" id="contact-map"></div>
+          </div>
+          <div class="vm-card" style="padding:30px">
+            <div class="vm-card__icon"><i data-lucide="send"></i></div>
+            <h3>Kirim Pesan</h3>
+            <p class="mb-3">Isi formulir berikut, pesan Anda langsung masuk ke dashboard sekolah.</p>
+            <form id="contact-form" novalidate>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="c-name">Nama Lengkap <span class="req">*</span></label>
+                  <input id="c-name" name="name" type="text" placeholder="Nama Anda" required>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="c-email">Email <span class="req">*</span></label>
+                  <input id="c-email" name="email" type="email" placeholder="nama@email.com" required>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="c-phone">No. HP / WhatsApp</label>
+                  <input id="c-phone" name="phone" type="tel" placeholder="08xxxxxxxxxx">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="c-subject">Subjek <span class="req">*</span></label>
+                  <select id="c-subject" name="subject" required>
+                    <option value="">— Pilih subjek —</option>
+                    <option>Informasi PPDB</option>
+                    <option>Biaya &amp; Pembayaran</option>
+                    <option>Kunjungan / Survei Sekolah</option>
+                    <option>Kerja Sama</option>
+                    <option>Lainnya</option>
+                  </select>
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label for="c-message">Pesan <span class="req">*</span></label>
+                  <textarea id="c-message" name="message" placeholder="Tulis pesan Anda…" required></textarea>
+                  <div class="msg"></div>
+                </div>
+              </div>
+              <div class="form-success" style="display:none;margin-top:16px" role="status">
+                <div class="badge badge--success"><i data-lucide="check-circle-2"></i>Pesan berhasil dikirim. Jazakumullahu khairan!</div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--block mt-3"><i data-lucide="send"></i>Kirim Pesan</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="config/supabase.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data-seed.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () =>
+      Pages.boot({ page: 'kontak', pageTitle: 'Kontak', breadcrumb: [{ label: 'Kontak' }] }));
+  </script>
+</body>
+</html>

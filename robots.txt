@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /config/
+
+Sitemap: https://www.al-ihsan.sch.id/sitemap.xml

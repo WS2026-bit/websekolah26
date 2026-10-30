@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Masuk Admin — SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin-login">
+
+  <div class="login-wrap">
+    <div class="login-visual">
+      <img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/dbddfa4cb6f2.jpeg" alt="">
+      <div class="inner">
+        <div class="logo-row">
+          <img src="../assets/images/logo.svg" alt="Logo">
+          <div><b>SIT Al-Ihsan</b><span>Admin Panel &amp; CMS</span></div>
+        </div>
+        <h2>Kelola Website Sekolah<br>dalam Satu Dashboard</h2>
+        <p>Manajemen berita, agenda, galeri, program, prestasi, PPDB online, hingga pengaturan website — semuanya terpusat, aman, dan mudah digunakan.</p>
+      </div>
+    </div>
+
+    <div class="login-panel">
+      <div class="login-card">
+        <a class="brand" href="../index.html">
+          <img src="../assets/images/logo.svg" alt="Logo SIT Al-Ihsan">
+          <span class="brand__text">
+            <span class="brand__name">SIT Al-Ihsan</span>
+            <span class="brand__tag">Dashboard Administrator</span>
+          </span>
+        </a>
+
+        <form id="login-form" novalidate>
+          <div class="aform">
+            <div class="field">
+              <label for="l-email">Email <span class="req">*</span></label>
+              <input id="l-email" type="email" autocomplete="username" placeholder="admin@al-ihsan.sch.id" required>
+              <div class="msg"></div>
+            </div>
+            <div class="field">
+              <label for="l-pass">Password <span class="req">*</span></label>
+              <div style="position:relative">
+                <input id="l-pass" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:46px">
+                <button type="button" id="toggle-pass" class="icon-btn" style="position:absolute;right:3px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0" aria-label="Tampilkan password"><i data-lucide="eye"></i></button>
+              </div>
+              <div class="msg"></div>
+            </div>
+            <button type="submit" class="btn btn--primary btn--block btn--lg" id="login-btn"><i data-lucide="log-in"></i>Masuk Dashboard</button>
+            <div id="login-error" class="badge badge--red" style="display:none;width:100%;justify-content:center"><i data-lucide="alert-triangle"></i><span id="login-error-msg"></span></div>
+          </div>
+        </form>
+
+        <div class="demo-cred">
+          <b>Akun demo (mode LocalStorage):</b><br>
+          Administrator — <code>admin@al-ihsan.sch.id</code> / <code>admin123</code><br>
+          Editor — <code>editor@al-ihsan.sch.id</code> / <code>editor123</code>
+        </div>
+
+        <p class="small muted mt-2 text-center">« <a href="../index.html" style="color:var(--g-600);font-weight:700">Kembali ke website</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      await Store.init();
+      U.refreshIcons();
+      if (Auth.current()) { location.replace('dashboard.html'); return; }
+
+      const form = document.getElementById('login-form');
+      document.getElementById('toggle-pass').addEventListener('click', (e) => {
+        const p = document.getElementById('l-pass');
+        p.type = p.type === 'password' ? 'text' : 'password';
+        e.currentTarget.innerHTML = `<i data-lucide="${p.type === 'password' ? 'eye' : 'eye-off'}"></i>`;
+        U.refreshIcons(e.currentTarget);
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('l-email').value.trim();
+        const pass = document.getElementById('l-pass').value;
+        const err = document.getElementById('login-error');
+        err.style.display = 'none';
+        const { ok, errors } = U.validateForm(
+          [{ key: 'email', label: 'Email', required: true, type: 'email' }, { key: 'pass', label: 'Password', required: true, min: 5 }],
+          { email, pass });
+        if (!ok) {
+          document.getElementById('login-error-msg').textContent = Object.values(errors)[0];
+          err.style.display = 'flex'; U.refreshIcons(err);
+          return;
+        }
+        const btn = document.getElementById('login-btn');
+        btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2"></i>Memverifikasi…'; U.refreshIcons(btn);
+        try {
+          const session = await Auth.login(email, pass);
+          U.logActivity('Login', email + ' (' + session.role + ')');
+          location.replace('dashboard.html');
+        } catch (ex) {
+          document.getElementById('login-error-msg').textContent = ex.message;
+          err.style.display = 'flex'; U.refreshIcons(err);
+          btn.disabled = false; btn.innerHTML = '<i data-lucide="log-in"></i>Masuk Dashboard'; U.refreshIcons(btn);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

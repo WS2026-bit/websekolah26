@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Guru &amp; Pegawai — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div id="staff-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'guru', title: 'Guru & Pegawai' })) return;
+      U.refreshIcons();
+
+      Admin.table('staff-table', {
+        table: 'staff', title: 'Guru & Pegawai',
+        searchKeys: ['name', 'position', 'subject'],
+        filters: [{ key: 'type', label: 'Kelompok', options: [
+          { v: 'pimpinan', l: 'Pimpinan' }, { v: 'guru', l: 'Guru' }, { v: 'tendik', l: 'Tenaga Kependidikan' }] }],
+        defaultSort: { key: 'name', dir: 'asc' },
+        columns: [
+          { key: 'photo', label: 'Foto', render: r => `
+            <span class="tcard-r__ava" style="width:40px;height:40px;font-size:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--g-800),var(--g-600));color:var(--gold-300);font-weight:800;overflow:hidden">
+              ${r.photo ? `<img src="${U.esc(r.photo)}" alt="" style="width:100%;height:100%;object-fit:cover">` : U.initials(r.name)}
+            </span>` },
+          { key: 'name', label: 'Nama', type: 'main', sub: 'position' },
+          { key: 'type', label: 'Kelompok', type: 'badge', badgeMap: { pimpinan: 'badge--gold', guru: 'badge--green', tendik: 'badge--info' } },
+          { key: 'subject', label: 'Bidang' },
+          { key: 'education', label: 'Pendidikan' },
+        ],
+        fields: [
+          { key: 'name', label: 'Nama Lengkap (dengan gelar)', required: true, min: 4 },
+          { key: 'position', label: 'Jabatan', required: true, placeholder: 'mis. Guru Matematika' },
+          { key: 'type', label: 'Kelompok', type: 'select', required: true, options: [
+            { v: 'pimpinan', l: 'Pimpinan' }, { v: 'guru', l: 'Guru' }, { v: 'tendik', l: 'Tenaga Kependidikan' }] },
+          { key: 'subject', label: 'Bidang / Mapel' },
+          { key: 'education', label: 'Latar Belakang Pendidikan' },
+          { key: 'photo', label: 'Foto', type: 'image' },
+        ],
+      });
+    })();
+  </script>
+</body>
+</html>

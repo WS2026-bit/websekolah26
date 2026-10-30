@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div class="mode-note" id="mode-note"></div>
+
+        <div class="stat-cards" id="stat-cards"></div>
+
+        <div class="grid-admin c2">
+          <div class="panel">
+            <div class="panel__head"><h3>Tren Pendaftar PPDB per Bulan</h3><small id="ppdb-total-label"></small></div>
+            <div class="panel__body"><div class="chart-box"><canvas id="chart-ppdb" aria-label="Grafik pendaftar PPDB" role="img"></canvas></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel__head"><h3>Status Pendaftaran</h3></div>
+            <div class="panel__body"><div class="chart-box"><canvas id="chart-status" aria-label="Grafik status pendaftaran" role="img"></canvas></div></div>
+          </div>
+        </div>
+
+        <div class="grid-admin c2 mt-3">
+          <div class="panel">
+            <div class="panel__head"><h3>Pendaftar Terbaru</h3><a class="btn btn--outline btn--sm" href="ppdb.html">Kelola PPDB</a></div>
+            <div class="panel__body" id="recent-admissions"></div>
+          </div>
+          <div class="panel">
+            <div class="panel__head"><h3>Pesan Masuk Terbaru</h3><a class="btn btn--outline btn--sm" href="pengaturan.html?tab=pesan">Semua Pesan</a></div>
+            <div class="panel__body" id="recent-messages"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'dashboard', title: 'Dashboard' })) return;
+      U.refreshIcons();
+
+      const css = getComputedStyle(document.documentElement);
+      const C = {
+        green: css.getPropertyValue('--g-600').trim() || '#1b6a4c',
+        gold: css.getPropertyValue('--gold-500').trim() || '#c9a227',
+        red: '#c0392b', blue: '#1f6f8b', warn: '#b07d10',
+        text: css.getPropertyValue('--text-muted').trim() || '#55645b',
+        grid: css.getPropertyValue('--border').trim() || '#e5dfcf',
+      };
+      Chart.defaults.color = C.text;
+      Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+      Chart.defaults.borderColor = C.grid;
+
+      /* Stat cards */
+      const [adms, msgs, newsN, unread] = await Promise.all([
+        Store.count('admissions'), Store.count('messages'), Store.count('news'),
+        Store.list('messages', { filters: { read: false }, perPage: 0 }),
+      ]);
+      const newAdm = adms; // total pendaftar
+      document.getElementById('stat-cards').innerHTML = `
+        <div class="scard"><div class="scard__icon i-gold"><i data-lucide="user-plus"></i></div>
+          <div><b>${U.fmtNum(newAdm)}</b><span>Pendaftar PPDB</span></div></div>
+        <div class="scard"><div class="scard__icon i-green"><i data-lucide="newspaper"></i></div>
+          <div><b>${U.fmtNum(newsN)}</b><span>Artikel Berita</span></div></div>
+        <div class="scard"><div class="scard__icon i-blue"><i data-lucide="mail"></i></div>
+          <div><b>${U.fmtNum(unread.total)}</b><span>Pesan Belum Dibaca</span><small>dari ${U.fmtNum(msgs)} total</small></div></div>
+        <div class="scard"><div class="scard__icon i-red"><i data-lucide="clock-4"></i></div>
+          <div><b id="pending-count">…</b><span>Menunggu Verifikasi</span></div></div>`;
+      U.refreshIcons();
+
+      const pending = (await Store.list('admissions', { filters: { status: 'menunggu' }, perPage: 0 })).total;
+      document.getElementById('pending-count').textContent = U.fmtNum(pending);
+
+      document.getElementById('mode-note').innerHTML = Store.mode === 'supabase'
+        ? '<i data-lucide="cloud"></i><span>Terhubung ke <b>Supabase</b> — semua perubahan tersimpan permanen di database dan bisa diakses dari berbagai perangkat.</span>'
+        : '<i data-lucide="database"></i><span><b>Mode Demo</b> — data tersimpan di LocalStorage browser ini. Untuk produksi (online & multi-perangkat), aktifkan Supabase pada <code>config/supabase.js</code> — panduan lengkap: <b>PANDUAN-DEPLOY.md</b>.</span>';
+      U.refreshIcons();
+
+      /* Chart: pendaftar per bulan (6 bulan terakhir) */
+      const all = (await Store.list('admissions', { perPage: 0 })).rows;
+      const labels = []; const data = [];
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        labels.push(U.monthName(d.getMonth()).slice(0, 3) + ' ' + String(d.getFullYear()).slice(2));
+        data.push(all.filter(a => { const c = new Date(a.created_at); return c.getMonth() === d.getMonth() && c.getFullYear() === d.getFullYear(); }).length);
+      }
+      document.getElementById('ppdb-total-label').textContent = `Total ${all.length} pendaftar`;
+      const chTrend = new Chart(document.getElementById('chart-ppdb'), {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Pendaftar', data, backgroundColor: C.gold, borderRadius: 8, maxBarThickness: 42 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+      });
+
+      /* Chart: status pie */
+      const st = { menunggu: 0, diverifikasi: 0, diterima: 0, ditolak: 0 };
+      all.forEach(a => { st[a.status] = (st[a.status] || 0) + 1; });
+      const chStatus = new Chart(document.getElementById('chart-status'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Menunggu', 'Diverifikasi', 'Diterima', 'Ditolak'],
+          datasets: [{ data: [st.menunggu, st.diverifikasi, st.diterima, st.ditolak], backgroundColor: [C.warn, C.blue, C.green, C.red], borderWidth: 0 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom' } } },
+      });
+
+      /* Pastikan kedua chart ter-render penuh setelah layout stabil
+         (tanpa ini, chart kadang tergambar kecil karena canvas berukuran 0 saat inisialisasi) */
+      requestAnimationFrame(() => setTimeout(() => { chTrend.resize(); chStatus.resize(); }, 80));
+
+      /* Pendaftar terbaru */
+      const rec = (await Store.list('admissions', { orderBy: 'created_at', orderDir: 'desc', perPage: 5 })).rows;
+      const stCls = { menunggu: 'st--menunggu', diverifikasi: 'st--diverifikasi', diterima: 'st--diterima', ditolak: 'st--ditolak' };
+      document.getElementById('recent-admissions').innerHTML = rec.length ? rec.map(a => `
+        <div class="msg-item">
+          <div style="flex:1;min-width:0">
+            <div class="msg-title">${U.esc(a.full_name)} <span class="badge badge--green" style="margin-left:6px">${U.esc(a.jenjang)}</span></div>
+            <div class="msg-meta"><span>${U.esc(a.reg_number)}</span><span>${U.fmtDateTime(a.created_at)}</span></div>
+          </div>
+          <span class="st ${stCls[a.status] || 'st--menunggu'}">${U.esc(a.status)}</span>
+        </div>`).join('') : '<p class="muted small">Belum ada pendaftar.</p>';
+
+      /* Pesan terbaru */
+      const ms = (await Store.list('messages', { orderBy: 'created_at', orderDir: 'desc', perPage: 5 })).rows;
+      document.getElementById('recent-messages').innerHTML = ms.length ? ms.map(m => `
+        <div class="msg-item ${m.read ? '' : 'unread'}">
+          <div style="flex:1;min-width:0">
+            <div class="msg-title">${U.esc(m.subject)}</div>
+            <div class="msg-meta"><span>${U.esc(m.name)}</span><span>${U.fmtDateTime(m.created_at)}</span></div>
+          </div>
+        </div>`).join('') : '<p class="muted small">Belum ada pesan.</p>';
+    })();
+  </script>
+</body>
+</html>

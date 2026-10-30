@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mencari Jejak Alumni SIT Al-Ihsan — alumni yang belum terekap dapat mendaftarkan dirinya sendiri agar terhubung kembali dengan almamater dan masuk rekap resmi alumni sekolah.">
+  <meta property="og:title" content="Mencari Jejak Alumni — SIT Al-Ihsan">
+  <meta property="og:type" content="website">
+  <title>Mencari Jejak Alumni — SIT Al-Ihsan</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="tracer">
+
+  <header id="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero__bg"><img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/983dd8d2e7bf.jpg" alt="" loading="lazy"></div>
+      <div class="container">
+        <div id="page-breadcrumb"></div>
+        <h1>Mencari Jejak <em style="color:var(--gold-300);font-style:normal">Alumni</em></h1>
+        <p>Alumni yang belum terekap karena putus kontak — silakan daftarkan dirimu sendiri agar data masuk rekap resmi alumni sekolah.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+
+        <!-- Ringkasan rekap -->
+        <div class="tstats" id="tracer-stats" aria-label="Ringkasan rekap alumni"></div>
+
+        <div class="grid grid--2" style="align-items:start">
+          <!-- Informasi -->
+          <div style="display:grid;gap:16px">
+            <div class="fcard">
+              <div class="fcard__icon"><i data-lucide="search"></i></div>
+              <div>
+                <h4>Mengapa program ini ada?</h4>
+                <p>Banyak alumni — terutama angkatan awal sebelum sistem database berjalan — belum tercatat di sekolah. Melalui formulir ini, <b>kamu sendiri</b> yang mengisi datamu, lalu tim humas memverifikasinya agar rekap alumni menjadi akurat dan resmi.</p>
+              </div>
+            </div>
+            <div class="fcard">
+              <div class="fcard__icon"><i data-lucide="list-checks"></i></div>
+              <div>
+                <h4>Bagaimana alurnya?</h4>
+                <p>1) Isi formulir di samping (± 3 menit). &nbsp;2) Tim humas mengecek &amp; memverifikasi data (1–3 hari kerja). &nbsp;3) Data berstatus <i>terverifikasi</i> masuk rekap resmi alumni di website &amp; basis data sekolah.</p>
+              </div>
+            </div>
+            <div class="fcard">
+              <div class="fcard__icon"><i data-lucide="shield-check"></i></div>
+              <div>
+                <h4>Apakah datamu aman?</h4>
+                <p>Data hanya digunakan untuk administrasi alumni sekolah: rekap, undangan reuni/hiburan, serta program kemitraan alumni. Data tidak dibagikan ke pihak lain tanpa izin. Kamu bisa mencentang <i>bersedia menjadi mentor</i> bila ingin dilibatkan lebih aktif.</p>
+              </div>
+            </div>
+            <div class="fcard">
+              <div class="fcard__icon"><i data-lucide="message-circle"></i></div>
+              <div>
+                <h4>Butuh bantuan?</h4>
+                <p>Ada kendala saat mengisi? Hubungi humas via WhatsApp atau email <b id="tracer-contact"></b> — kami bantu isi bersama.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulir -->
+          <div class="vm-card" style="padding:30px">
+            <div class="vm-card__icon"><i data-lucide="user-search"></i></div>
+            <h3>Formulir Data Alumni</h3>
+            <p class="mb-3">Isi sesuai kondimu saat ini. Kolom bertanda <span style="color:var(--danger)">*</span> wajib diisi.</p>
+            <form id="tracer-form" novalidate>
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label for="t-name">Nama Lengkap <span class="req">*</span></label>
+                  <input id="t-name" name="full_name" type="text" placeholder="Nama lengkap saat bersekolah" required>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-jenjang">Jenjang Saat Lulus <span class="req">*</span></label>
+                  <select id="t-jenjang" name="jenjang" required>
+                    <option value="">— Pilih jenjang —</option>
+                    <option value="TKIT">TKIT</option>
+                    <option value="SDIT">SDIT</option>
+                    <option value="SMPIT">SMPIT</option>
+                    <option value="SMAIT">SMAIT</option>
+                  </select>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-year">Tahun Lulus <span class="req">*</span></label>
+                  <select id="t-year" name="grad_year" required>
+                    <option value="">— Pilih tahun —</option>
+                  </select>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-wa">No. WhatsApp Aktif <span class="req">*</span></label>
+                  <input id="t-wa" name="whatsapp" type="tel" placeholder="08xxxxxxxxxx" required>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-email">Email</label>
+                  <input id="t-email" name="email" type="email" placeholder="nama@email.com (opsional)">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-status">Status Saat Ini <span class="req">*</span></label>
+                  <select id="t-status" name="current_status" required>
+                    <option value="">— Pilih status —</option>
+                    <option value="kuliah">Kuliah</option>
+                    <option value="beasiswa">Beasiswa / Studi Lanjut (dalam &amp; luar negeri)</option>
+                    <option value="bekerja">Bekerja</option>
+                    <option value="wirausaha">Wirausaha</option>
+                    <option value="lainnya">Lainnya</option>
+                  </select>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-inst">Kampus / Perusahaan / Instansi <span class="req">*</span></label>
+                  <input id="t-inst" name="institution" type="text" placeholder="mis. Universitas Indonesia / PT XYZ" required>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-major">Jurusan / Posisi</label>
+                  <input id="t-major" name="major_position" type="text" placeholder="mis. S1 Kedokteran / HRD Manager (opsional)">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-city">Kota / Negara Domisili</label>
+                  <input id="t-city" name="city_country" type="text" placeholder="mis. Bogor, Indonesia (opsional)">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="t-juz">Hafalan Terakhir (juz)</label>
+                  <input id="t-juz" name="hafiz_juz" type="number" min="0" max="30" placeholder="0–30 (opsional)">
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label for="t-msg">Pesan / Harapan untuk Almamater</label>
+                  <textarea id="t-msg" name="message" placeholder="Cerita singkat atau harapanmu untuk sekolah (opsional)…" style="min-height:90px"></textarea>
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label style="display:flex;gap:10px;align-items:flex-start;font-weight:600">
+                    <input type="checkbox" name="willing_mentor" style="width:18px;height:18px;flex:none;margin-top:2px">
+                    <span>Saya bersedia menjadi <b>kontak / mentor alumni</b> (dihubungi sekolah untuk bimbingan, sharing karier, atau kegiatan alumni).</span>
+                  </label>
+                </div>
+                <div class="field span-2">
+                  <label style="display:flex;gap:10px;align-items:flex-start;font-weight:600">
+                    <input type="checkbox" name="consent" style="width:18px;height:18px;flex:none;margin-top:2px">
+                    <span>Saya setuju data di atas digunakan sekolah untuk <b>rekap resmi alumni</b> dan komunikasi administrasi alumni. <span class="req">*</span></span>
+                  </label>
+                  <div class="msg"></div>
+                </div>
+                <!-- Anti-spam honeypot: kolom tersembunyi, wajib kosong -->
+                <div class="hp-field" aria-hidden="true">
+                  <label>Biaya kolom ini kosong<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+                </div>
+              </div>
+              <div class="form-success" style="display:none;margin-top:16px" role="status">
+                <div class="badge badge--success"><i data-lucide="check-circle-2"></i>Data terkirim! Tim humas akan memverifikasi dalam 1–3 hari kerja. Jazakumullahu khairan.</div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--block mt-3"><i data-lucide="send"></i>Kirim Data Alumni</button>
+              <p class="small muted" style="margin-top:12px;text-align:center">Data yang dikirim berstatus <b>menunggu verifikasi</b> sampai dipastikan oleh tim humas sekolah.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="config/supabase.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data-seed.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () =>
+      Pages.boot({ page: 'tracer', pageTitle: 'Mencari Jejak Alumni', breadcrumb: [{ label: 'Jejak Alumni' }] }));
+  </script>
+</body>
+</html>

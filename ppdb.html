@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="PPDB Online SIT Al-Ihsan TA 2027/2028: persyaratan, alur pendaftaran, jadwal seleksi, biaya pendidikan, formulir online, dan cek status pendaftaran.">
+  <meta property="og:title" content="PPDB Online 2027/2028 — SIT Al-Ihsan">
+  <meta property="og:type" content="website">
+  <title>PPDB Online — SIT Al-Ihsan</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="ppdb">
+
+  <header id="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero__bg"><img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/5a506bc3f7da.jpg" alt="" loading="lazy"></div>
+      <div class="container">
+        <div id="page-breadcrumb"></div>
+        <span id="ppdb-status"></span>
+        <h1>PPDB Online <span id="ppdb-ta" style="color:var(--gold-300)"></span></h1>
+        <p>Penerimaan Peserta Didik Baru TKIT, SDIT, SMPIT &amp; SMAIT — sepenuhnya online, transparan, dan mudah dipantau.</p>
+        <div class="flex gap-2 flex-wrap mt-3">
+          <a href="#daftar" class="btn btn--gold"><i data-lucide="pen-line"></i>Isi Formulir Pendaftaran</a>
+          <a href="#status" class="btn btn--white"><i data-lucide="search"></i>Cek Status</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- GELOMBANG & ALUR -->
+    <section class="section">
+      <div class="container">
+        <div class="grid grid--2" style="align-items:start">
+          <div>
+            <span class="eyebrow reveal">Jadwal</span>
+            <h2 class="section-title reveal">Gelombang Pendaftaran</h2>
+            <div class="grid" style="gap:14px" id="ppdb-gelombang"></div>
+          </div>
+          <div>
+            <span class="eyebrow reveal">Alur</span>
+            <h2 class="section-title reveal">7 Langkah Pendaftaran</h2>
+            <div class="timeline" id="ppdb-alur" style="margin-top:18px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERSYARATAN + JADWAL -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="grid grid--2" style="align-items:start">
+          <div class="vm-card reveal">
+            <div class="vm-card__icon"><i data-lucide="clipboard-list"></i></div>
+            <h3>Persyaratan Pendaftaran</h3>
+            <ul class="mlist" id="ppdb-persyaratan"></ul>
+          </div>
+          <div>
+            <div class="vm-card reveal" style="margin-bottom:24px">
+              <div class="vm-card__icon"><i data-lucide="calendar-clock"></i></div>
+              <h3>Jadwal Seleksi</h3>
+              <ul class="mlist" id="ppdb-jadwal"></ul>
+            </div>
+            <div class="vm-card reveal" data-delay="1">
+              <div class="vm-card__icon"><i data-lucide="headset"></i></div>
+              <h3>Kontak Panitia PPDB</h3>
+              <ul class="footer__contact" id="ppdb-kontak" style="display:grid;gap:12px"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BIAYA -->
+    <section class="section" id="biaya">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal">Transparansi</span>
+          <h2 class="section-title reveal">Biaya Pendidikan</h2>
+          <p class="section-desc reveal">Rincian biaya per jenjang (dapat berubah; keringanan tersedia untuk hafizh 30 juz, anak yatim &amp; prestasi akademik).</p>
+        </div>
+        <div class="table-wrap reveal">
+          <table class="table">
+            <thead><tr><th>Jenjang</th><th>Biaya PPDB</th><th>SPP</th><th>Keterangan</th></tr></thead>
+            <tbody id="ppdb-biaya"></tbody>
+          </table>
+        </div>
+        <p class="small muted mt-1">*Nominal dalam Rupiah (Rp). Hubungi panitia untuk skema beasiswa &amp; keringanan.</p>
+      </div>
+    </section>
+
+    <!-- FORMULIR -->
+    <section class="section section--alt" id="daftar">
+      <div class="container" id="ppdb-form-area">
+        <div class="section-head" id="ppdb-form-top">
+          <span class="eyebrow reveal">Formulir Online</span>
+          <h2 class="section-title reveal">Formulir Pendaftaran Siswa Baru</h2>
+          <p class="section-desc reveal">Isi 3 langkah singkat. Nomor registrasi terbit otomatis setelah pengiriman.</p>
+        </div>
+
+        <form id="ppdb-form" novalidate style="max-width:860px;margin-inline:auto">
+          <div class="stepper" aria-label="Langkah pendaftaran">
+            <div class="step active"><span class="step__dot">1</span><span class="step__label">Data Calon Siswa</span></div>
+            <span class="step__line"></span>
+            <div class="step"><span class="step__dot">2</span><span class="step__label">Orang Tua / Wali</span></div>
+            <span class="step__line"></span>
+            <div class="step"><span class="step__dot">3</span><span class="step__label">Dokumen &amp; Kirim</span></div>
+          </div>
+
+          <div class="vm-card" style="padding:34px">
+            <!-- STEP 1 -->
+            <div data-step="1">
+              <h3 style="margin-bottom:18px">Data Calon Siswa</h3>
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label for="f-name">Nama Lengkap <span class="req">*</span></label>
+                  <input id="f-name" name="full_name" type="text" placeholder="Sesuai akta kelahiran">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="f-nisn">NISN <span class="req">*</span> (10 digit)</label>
+                  <input id="f-nisn" name="nisn" type="text" inputmode="numeric" maxlength="10" placeholder="00XXXXXXXX">
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label>Jenis Kelamin <span class="req">*</span></label>
+                  <div class="radio-row">
+                    <label class="radio-pill"><input type="radio" name="gender" value="L" checked><span>Laki-laki</span></label>
+                    <label class="radio-pill"><input type="radio" name="gender" value="P"><span>Perempuan</span></label>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="f-bp">Tempat Lahir <span class="req">*</span></label>
+                  <input id="f-bp" name="birth_place" type="text" placeholder="Kota kelahiran">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="f-bd">Tanggal Lahir <span class="req">*</span></label>
+                  <input id="f-bd" name="birth_date" type="date">
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label for="f-addr">Alamat Lengkap <span class="req">*</span></label>
+                  <textarea id="f-addr" name="address" style="min-height:80px" placeholder="Jalan, RT/RW, kelurahan, kecamatan, kota"></textarea>
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="f-ps">Asal Sekolah <span class="req">*</span></label>
+                  <input id="f-ps" name="previous_school" type="text" placeholder="TK/SD/SMP asal">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="f-jenjang">Jenjang Didaftar <span class="req">*</span></label>
+                  <select id="f-jenjang" name="jenjang" required>
+                    <option value="">— Pilih jenjang —</option>
+                    <option value="TKIT">TKIT</option>
+                    <option value="SDIT">SDIT</option>
+                    <option value="SMPIT">SMPIT</option>
+                    <option value="SMAIT">SMAIT</option>
+                  </select>
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label>Ikut Program Asrama (SMP/SMA)?</label>
+                  <div class="radio-row">
+                    <label class="radio-pill"><input type="radio" name="asrama" value="tidak" checked><span>Tidak</span></label>
+                    <label class="radio-pill"><input type="radio" name="asrama" value="ya"><span>Ya, Asrama</span></label>
+                  </div>
+                  <div class="help">Pilihan asrama bersifat preferensi; final setelah wawancara.</div>
+                </div>
+              </div>
+              <button type="button" class="btn btn--primary mt-3" data-next>Selanjutnya <i data-lucide="arrow-right"></i></button>
+            </div>
+
+            <!-- STEP 2 -->
+            <div data-step="2" style="display:none">
+              <h3 style="margin-bottom:18px">Data Orang Tua / Wali</h3>
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label for="f-pn">Nama Orang Tua / Wali <span class="req">*</span></label>
+                  <input id="f-pn" name="parent_name" type="text" placeholder="Nama ayah/ibu/wali">
+                  <div class="msg"></div>
+                </div>
+                <div class="field">
+                  <label for="f-pp">No. HP / WhatsApp <span class="req">*</span></label>
+                  <input id="f-pp" name="parent_phone" type="tel" placeholder="08xxxxxxxxxx">
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label for="f-pe">Email <span class="req">*</span></label>
+                  <input id="f-pe" name="parent_email" type="email" placeholder="email aktif untuk pemberitahuan">
+                  <div class="msg"></div>
+                </div>
+                <div class="field span-2">
+                  <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500">
+                    <input type="checkbox" name="agree" value="setuju" style="width:18px;height:18px;margin-top:3px">
+                    <span>Saya menyatakan data yang diisi benar dan menyetujui proses seleksi PPDB <span class="req">*</span></span>
+                  </label>
+                  <div class="msg"></div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3 flex-wrap">
+                <button type="button" class="btn btn--outline" data-prev><i data-lucide="arrow-left"></i>Kembali</button>
+                <button type="button" class="btn btn--primary" data-next>Selanjutnya <i data-lucide="arrow-right"></i></button>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div data-step="3" style="display:none">
+              <h3 style="margin-bottom:6px">Unggah Dokumen Persyaratan</h3>
+              <p class="small muted mb-3">Format JPG/PNG (maks 2 MB) atau PDF (maks 1 MB). Tanda <span class="req">*</span> wajib.</p>
+              <div class="form-grid cols-2">
+                <div class="field">
+                  <label>Akta Kelahiran <span class="req">*</span></label>
+                  <label class="dropzone"><input type="file" data-doc="akta" accept=".jpg,.jpeg,.png,.webp,.pdf" hidden>
+                    <i data-lucide="file-up"></i><b class="doc-name">Pilih atau jatuhkan file</b><small>akta.pdf / akta.jpg</small></label>
+                </div>
+                <div class="field">
+                  <label>Kartu Keluarga <span class="req">*</span></label>
+                  <label class="dropzone"><input type="file" data-doc="kk" accept=".jpg,.jpeg,.png,.webp,.pdf" hidden>
+                    <i data-lucide="file-up"></i><b class="doc-name">Pilih atau jatuhkan file</b><small>kk.pdf / kk.jpg</small></label>
+                </div>
+                <div class="field">
+                  <label>Pas Foto 3×4 <span class="req">*</span></label>
+                  <label class="dropzone"><input type="file" data-doc="foto" accept=".jpg,.jpeg,.png,.webp" hidden>
+                    <i data-lucide="image-up"></i><b class="doc-name">Pilih atau jatuhkan file</b><small>foto.jpg</small></label>
+                </div>
+                <div class="field">
+                  <label>Rapor / Ijazah / SKL</label>
+                  <label class="dropzone"><input type="file" data-doc="rapor" accept=".jpg,.jpeg,.png,.webp,.pdf" hidden>
+                    <i data-lucide="file-up"></i><b class="doc-name">Pilih atau jatuhkan file</b><small>rapor.pdf (opsional, dapat menyusul)</small></label>
+                </div>
+              </div>
+
+              <h3 class="mt-4" style="margin-bottom:12px">Ringkasan Pendaftaran</h3>
+              <div class="table-wrap"><table class="table" id="sum-body"></table></div>
+
+              <div class="flex gap-2 mt-3 flex-wrap">
+                <button type="button" class="btn btn--outline" data-prev><i data-lucide="arrow-left"></i>Kembali</button>
+                <button type="submit" class="btn btn--gold"><i data-lucide="check-circle-2"></i>Kirim Pendaftaran</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- CEK STATUS -->
+    <section class="section" id="status">
+      <div class="container" style="max-width:720px">
+        <div class="section-head section-head--center">
+          <span class="eyebrow reveal">Pantauan</span>
+          <h2 class="section-title reveal">Cek Status Pendaftaran</h2>
+          <p class="section-desc reveal">Masukkan nomor registrasi dan tanggal lahir sesuai bukti pendaftaran.</p>
+        </div>
+        <form id="status-form" class="form-grid cols-2" novalidate>
+          <div class="field">
+            <label for="st-reg">Nomor Registrasi <span class="req">*</span></label>
+            <input id="st-reg" type="text" placeholder="PPDB-2027-0001" required>
+            <div class="msg"></div>
+          </div>
+          <div class="field">
+            <label for="st-birth">Tanggal Lahir Calon Siswa <span class="req">*</span></label>
+            <input id="st-birth" type="date" required>
+            <div class="msg"></div>
+          </div>
+          <div class="span-2">
+            <button type="submit" class="btn btn--primary btn--block"><i data-lucide="search"></i>Cek Status</button>
+          </div>
+        </form>
+        <div class="mt-3" id="status-result" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="config/supabase.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data-seed.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/ppdb.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => Ppdb.boot());
+  </script>
+</body>
+</html>

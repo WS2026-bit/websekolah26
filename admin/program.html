@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Kelola Program — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div id="program-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'program', title: 'Program Pendidikan' })) return;
+      U.refreshIcons();
+
+      const catOpts = [
+        { v: 'akademik', l: 'Akademik' }, { v: 'tahfizh', l: 'Tahfizh Al-Qur\u2019an' }, { v: 'karakter', l: 'Karakter' },
+        { v: 'kepemimpinan', l: 'Kepemimpinan' }, { v: 'bahasa', l: 'Bahasa' }, { v: 'internasional', l: 'Internasional' },
+        { v: 'ekstrakurikuler', l: 'Ekstrakurikuler' }, { v: 'boarding', l: 'Boarding' },
+      ];
+      const iconOpts = ['graduation-cap', 'book-open-text', 'heart-handshake', 'flag', 'languages', 'globe-2', 'trophy', 'home', 'sparkles', 'star']
+        .map(i => ({ v: i, l: i }));
+
+      Admin.table('program-table', {
+        table: 'programs', title: 'Program',
+        searchKeys: ['title', 'excerpt'],
+        filters: [{ key: 'category', label: 'Kategori', options: catOpts }],
+        defaultSort: { key: 'featured', dir: 'desc' },
+        columns: [
+          { key: 'image', label: 'Gambar', type: 'image' },
+          { key: 'title', label: 'Program', type: 'main', sub: 'excerpt' },
+          { key: 'category', label: 'Kategori', type: 'badge', badgeMap: { akademik: 'badge--green', tahfizh: 'badge--gold' } },
+          { key: 'featured', label: 'Unggulan', type: 'bool' },
+        ],
+        fields: [
+          { key: 'title', label: 'Nama Program', required: true, min: 5 },
+          { key: 'category', label: 'Kategori', type: 'select', required: true, options: catOpts },
+          { key: 'icon', label: 'Ikon (Lucide)', type: 'select', options: iconOpts, help: 'Nama ikon lucide, mis. graduation-cap' },
+          { key: 'image', label: 'Gambar Program', type: 'image' },
+          { key: 'excerpt', label: 'Ringkasan', type: 'textarea', required: true, min: 20, rows: 3 },
+          { key: 'description', label: 'Deskripsi Lengkap', type: 'html', required: true, rows: 8 },
+          { key: 'featured', label: 'Tampilkan sebagai unggulan di beranda' },
+        ],
+      });
+    })();
+  </script>
+</body>
+</html>

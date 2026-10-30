@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Kelola Berita — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div class="atabs">
+          <button class="atab active" data-tab="berita"><i data-lucide="newspaper"></i>Daftar Berita</button>
+          <button class="atab" data-tab="kategori"><i data-lucide="tags"></i>Kategori</button>
+        </div>
+
+        <div id="tab-berita"><div id="news-table"></div></div>
+
+        <div id="tab-kategori" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="info"></i>Manajemen Kategori Berita</h3>
+            <div id="cat-table"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'berita', title: 'Berita & Artikel' })) return;
+      U.refreshIcons();
+
+      const cats = await Admin.catOptions();
+      Admin.table('news-table', {
+        table: 'news', title: 'Berita',
+        searchKeys: ['title', 'excerpt'],
+        filters: [{ key: 'category_id', label: 'Kategori', optionsFrom: 'categories' }],
+        columns: [
+          { key: 'image', label: 'Gambar', type: 'image' },
+          { key: 'title', label: 'Judul', type: 'main', sub: 'excerpt' },
+          { key: 'category_id', label: 'Kategori', render: r => U.esc(cats.find(c => c.id === r.category_id)?.name || '-') },
+          { key: 'date', label: 'Tanggal', type: 'date' },
+          { key: 'views', label: 'Dilihat', type: 'number' },
+          { key: 'featured', label: 'Unggulan', type: 'bool' },
+        ],
+        fields: [
+          { key: 'title', label: 'Judul Berita', required: true, min: 8 },
+          { key: 'category_id', label: 'Kategori', type: 'select', required: true, optionsFrom: 'categories', placeholder: '\u2014 Pilih kategori \u2014' },
+          { key: 'date', label: 'Tanggal Terbit', type: 'date', required: true },
+          { key: 'author', label: 'Penulis', placeholder: 'mis. Humas Al-Ihsan' },
+          { key: 'image', label: 'Gambar Utama', type: 'image' },
+          { key: 'excerpt', label: 'Ringkasan', type: 'textarea', required: true, min: 20, rows: 3 },
+          { key: 'content', label: 'Isi Berita', type: 'html', required: true, rows: 9 },
+          { key: 'featured', label: 'Tampilkan sebagai unggulan di beranda' },
+        ],
+      });
+
+      Admin.table('cat-table', {
+        table: 'categories', title: 'Kategori',
+        searchKeys: ['name'],
+        columns: [{ key: 'name', label: 'Nama Kategori', type: 'main', sub: 'slug' }],
+        fields: [{ key: 'name', label: 'Nama Kategori', required: true, min: 3 }],
+      });
+
+      document.querySelector('.atabs').addEventListener('click', (e) => {
+        const b = e.target.closest('.atab'); if (!b) return;
+        document.querySelectorAll('.atab').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.getElementById('tab-berita').style.display = b.dataset.tab === 'berita' ? 'block' : 'none';
+        document.getElementById('tab-kategori').style.display = b.dataset.tab === 'kategori' ? 'block' : 'none';
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Kelola Galeri — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div id="gallery-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'galeri', title: 'Galeri' })) return;
+      U.refreshIcons();
+
+      Admin.table('gallery-table', {
+        table: 'galleries', title: 'Galeri',
+        searchKeys: ['title', 'category'],
+        filters: [
+          { key: 'type', label: 'Jenis', options: [{ v: 'foto', l: 'Foto' }, { v: 'video', l: 'Video' }] },
+          { key: 'category', label: 'Kategori', options: [
+            { v: 'Kegiatan', l: 'Kegiatan' }, { v: 'Fasilitas', l: 'Fasilitas' }, { v: 'Pembelajaran', l: 'Pembelajaran' },
+            { v: 'Prestasi', l: 'Prestasi' }, { v: 'Kesantrian', l: 'Kesantrian' }, { v: 'Video', l: 'Video' }] },
+        ],
+        columns: [
+          { key: 'url', label: 'Media', render: r => r.type === 'video'
+            ? '<span class="badge badge--info"><i data-lucide="play" style="width:12px;height:12px"></i> Video</span>'
+            : `<img class="row-img" src="${U.esc(r.url || U.placeholder())}" alt="" loading="lazy">` },
+          { key: 'title', label: 'Judul', type: 'main', sub: 'category' },
+          { key: 'type', label: 'Jenis', type: 'badge', badgeMap: { foto: 'badge--green', video: 'badge--info' } },
+          { key: 'date', label: 'Tanggal', type: 'date' },
+        ],
+        fields: [
+          { key: 'title', label: 'Judul Dokumentasi', required: true, min: 5 },
+          { key: 'type', label: 'Jenis', type: 'select', required: true, options: [{ v: 'foto', l: 'Foto' }, { v: 'video', l: 'Video (YouTube embed)' }] },
+          { key: 'category', label: 'Kategori', type: 'select', required: true, options: [
+            { v: 'Kegiatan', l: 'Kegiatan' }, { v: 'Fasilitas', l: 'Fasilitas' }, { v: 'Pembelajaran', l: 'Pembelajaran' },
+            { v: 'Prestasi', l: 'Prestasi' }, { v: 'Kesantrian', l: 'Kesantrian' }, { v: 'Video', l: 'Video' }] },
+          { key: 'date', label: 'Tanggal', type: 'date', required: true },
+          { key: 'url', label: 'URL Media', type: 'image', help: 'Untuk foto: unggah/URL gambar. Untuk video: URL embed YouTube (youtube.com/embed/xxx)' },
+        ],
+      });
+    })();
+  </script>
+</body>
+</html>

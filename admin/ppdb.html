@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Pendaftaran PPDB — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div class="stat-cards" id="ppdb-stats"></div>
+
+        <div class="panel">
+          <div class="panel__head">
+            <h3>Daftar Pendaftar — TA <span id="ta-label"></span></h3>
+            <div class="flex gap-2 flex-wrap">
+              <button class="btn btn--outline btn--sm" id="btn-export"><i data-lucide="file-down"></i>Ekspor Excel (CSV)</button>
+              <button class="btn btn--outline btn--sm" id="btn-print"><i data-lucide="printer"></i>Cetak PDF</button>
+            </div>
+          </div>
+          <div class="panel__body">
+            <div class="toolbar">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="search" id="ppdb-search" placeholder="Cari nama / nomor registrasi / NISN…" aria-label="Cari pendaftar">
+              </div>
+              <select id="ppdb-filter-status" aria-label="Filter status">
+                <option value="">Semua Status</option>
+                <option value="menunggu">Menunggu</option>
+                <option value="diverifikasi">Diverifikasi</option>
+                <option value="diterima">Diterima</option>
+                <option value="ditolak">Ditolak</option>
+              </select>
+              <select id="ppdb-filter-jenjang" aria-label="Filter jenjang">
+                <option value="">Semua Jenjang</option>
+                <option value="TKIT">TKIT</option>
+                <option value="SDIT">SDIT</option>
+                <option value="SMPIT">SMPIT</option>
+                <option value="SMAIT">SMAIT</option>
+              </select>
+            </div>
+            <div class="atable-wrap"><table class="atable">
+              <thead><tr>
+                <th>No. Registrasi</th><th>Calon Siswa</th><th>Jenjang</th><th>Orang Tua</th><th>Status</th><th>Berkas</th><th style="width:120px">Aksi</th>
+              </tr></thead>
+              <tbody id="ppdb-tbody"><tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-muted)">Memuat…</td></tr></tbody>
+            </table></div>
+            <div class="table-foot"><span class="info" id="ppdb-info"></span><div class="pager" id="ppdb-pager"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'ppdb', title: 'Pendaftaran PPDB' })) return;
+      U.refreshIcons();
+
+      const PER = 10;
+      const state = { page: 1, search: '', status: '', jenjang: '' };
+      document.getElementById('ta-label').textContent = Admin.settings.ppdb_tahun_ajaran || '-';
+
+      /* Statistik ringkas */
+      const all = (await Store.list('admissions', { perPage: 0 })).rows;
+      const st = { menunggu: 0, diverifikasi: 0, diterima: 0, ditolak: 0 };
+      all.forEach(a => st[a.status] = (st[a.status] || 0) + 1);
+      document.getElementById('ppdb-stats').innerHTML = `
+        <div class="scard"><div class="scard__icon i-gold"><i data-lucide="users"></i></div><div><b>${U.fmtNum(all.length)}</b><span>Total Pendaftar</span></div></div>
+        <div class="scard"><div class="scard__icon i-blue"><i data-lucide="hourglass"></i></div><div><b>${U.fmtNum(st.menunggu)}</b><span>Menunggu</span></div></div>
+        <div class="scard"><div class="scard__icon i-green"><i data-lucide="check-circle-2"></i></div><div><b>${U.fmtNum(st.diterima)}</b><span>Diterima</span></div></div>
+        <div class="scard"><div class="scard__icon i-red"><i data-lucide="x-circle"></i></div><div><b>${U.fmtNum(st.ditolak)}</b><span>Ditolak</span></div></div>`;
+      U.refreshIcons();
+
+      const stCls = { menunggu: 'st--menunggu', diverifikasi: 'st--diverifikasi', diterima: 'st--diterima', ditolak: 'st--ditolak' };
+
+      async function load() {
+        let rows = (await Store.list('admissions', { orderBy: 'created_at', orderDir: 'desc', perPage: 0 })).rows;
+        if (state.status) rows = rows.filter(r => r.status === state.status);
+        if (state.jenjang) rows = rows.filter(r => r.jenjang === state.jenjang);
+        if (state.search) {
+          const q = state.search.toLowerCase();
+          rows = rows.filter(r => [r.full_name, r.reg_number, r.nisn, r.parent_name].some(x => String(x || '').toLowerCase().includes(q)));
+        }
+        const total = rows.length;
+        const pages = Math.max(1, Math.ceil(total / PER));
+        state.page = Math.min(state.page, pages);
+        rows = rows.slice((state.page - 1) * PER, state.page * PER);
+
+        const tb = document.getElementById('ppdb-tbody');
+        tb.innerHTML = rows.length ? rows.map(a => `
+          <tr>
+            <td><b>${U.esc(a.reg_number)}</b><div class="cell-sub">${U.fmtDate(a.created_at)}</div></td>
+            <td><div class="cell-main">${U.esc(a.full_name)}</div><div class="cell-sub">NISN ${U.esc(a.nisn || '-')} \u00b7 ${a.gender === 'P' ? 'P' : 'L'} \u00b7 ${U.fmtDate(a.birth_date, 'short')}</div></td>
+            <td><span class="badge badge--green">${U.esc(a.jenjang)}</span>${a.asrama ? '<div class="cell-sub">+ Asrama</div>' : ''}</td>
+            <td><div class="cell-main" style="max-width:170px">${U.esc(a.parent_name)}</div><div class="cell-sub">${U.esc(a.parent_phone)}</div></td>
+            <td><span class="st ${stCls[a.status] || 'st--menunggu'}">${U.esc(a.status)}</span></td>
+            <td>${(a.documents || []).length} berkas${a.verified ? ' \u00b7 <span class="badge badge--success">terverifikasi</span>' : ''}</td>
+            <td><div class="row-actions">
+              <button class="act-btn v" data-view="${U.esc(a.id)}" title="Detail" aria-label="Detail"><i data-lucide="eye"></i></button>
+              <button class="act-btn e" data-verify="${U.esc(a.id)}" title="Verifikasi berkas" aria-label="Verifikasi"><i data-lucide="badge-check"></i></button>
+              <button class="act-btn d" data-del="${U.esc(a.id)}" title="Hapus" aria-label="Hapus"><i data-lucide="trash-2"></i></button>
+            </div></td>
+          </tr>`).join('')
+          : `<tr><td colspan="7" style="padding:40px;text-align:center"><div class="empty" style="border:0;background:none"><i data-lucide="inbox"></i><b>Tidak ada data</b>Sesuaikan pencarian atau filter.</div></td></tr>`;
+        document.getElementById('ppdb-info').textContent = `Menampilkan ${rows.length} dari ${U.fmtNum(total)} pendaftar`;
+        let pg = `<button data-go="${state.page - 1}" ${state.page <= 1 ? 'disabled' : ''}>\u2039</button>`;
+        for (let p = 1; p <= pages; p++) pg += `<button class="${p === state.page ? 'active' : ''}" data-go="${p}">${p}</button>`;
+        pg += `<button data-go="${state.page + 1}" ${state.page >= pages ? 'disabled' : ''}>\u203a</button>`;
+        document.getElementById('ppdb-pager').innerHTML = pg;
+        U.refreshIcons();
+      }
+
+      document.getElementById('ppdb-search').addEventListener('input', U.debounce(e => { state.search = e.target.value.trim(); state.page = 1; load(); }, 300));
+      document.getElementById('ppdb-filter-status').addEventListener('change', e => { state.status = e.target.value; state.page = 1; load(); });
+      document.getElementById('ppdb-filter-jenjang').addEventListener('change', e => { state.jenjang = e.target.value; state.page = 1; load(); });
+      document.getElementById('ppdb-pager').addEventListener('click', e => {
+        const b = e.target.closest('button[data-go]'); if (!b || b.disabled) return;
+        state.page = Number(b.dataset.go); load();
+      });
+
+      /* Detail modal */
+      async function openDetail(a) {
+        document.getElementById('ppdb-detail')?.remove();
+        const docs = (a.documents || []).map(d => `
+          <div class="doc-card">
+            ${String(d.type).startsWith('image/') && !d.data.startsWith('SEED')
+              ? `<img src="${U.esc(d.data)}" alt="${U.esc(d.name)}">`
+              : `<div style="height:80px;display:flex;align-items:center;justify-content:center"><i data-lucide="file-text" style="width:28px;height:28px;color:var(--info)"></i></div>`}
+            <span class="doc-name">${U.esc(d.name)}</span>
+          </div>`).join('');
+        const ov = document.createElement('div');
+        ov.className = 'modal-overlay'; ov.id = 'ppdb-detail';
+        ov.innerHTML = `
+          <div class="modal modal--lg" role="dialog" aria-modal="true" aria-label="Detail pendaftar">
+            <div class="modal__head"><h3>${U.esc(a.full_name)} \u2014 ${U.esc(a.reg_number)}</h3>
+              <button class="icon-btn" data-close aria-label="Tutup"><i data-lucide="x"></i></button></div>
+            <div class="modal__body">
+              <div class="aform c2">
+                <div class="field"><label>NISN</label><input value="${U.esc(a.nisn)}" readonly></div>
+                <div class="field"><label>Jenis Kelamin</label><input value="${a.gender === 'P' ? 'Perempuan' : 'Laki-laki'}" readonly></div>
+                <div class="field"><label>Tempat / Tanggal Lahir</label><input value="${U.esc(a.birth_place)}, ${U.fmtDate(a.birth_date, 'long')}" readonly></div>
+                <div class="field"><label>Jenjang & Asrama</label><input value="${U.esc(a.jenjang)}${a.asrama ? ' \u00b7 Asrama' : ''}" readonly></div>
+                <div class="field span-2"><label>Alamat</label><input value="${U.esc(a.address)}" readonly></div>
+                <div class="field"><label>Asal Sekolah</label><input value="${U.esc(a.previous_school)}" readonly></div>
+                <div class="field"><label>Tanggal Daftar</label><input value="${U.fmtDateTime(a.created_at)}" readonly></div>
+                <div class="field"><label>Orang Tua / Wali</label><input value="${U.esc(a.parent_name)}" readonly></div>
+                <div class="field"><label>Kontak</label><input value="${U.esc(a.parent_phone)} \u00b7 ${U.esc(a.parent_email)}" readonly></div>
+                <div class="field span-2"><label>Dokumen Terlampir (${(a.documents || []).length})</label><div class="doc-grid">${docs || '<p class="small muted">Tidak ada berkas.</p>'}</div></div>
+                <div class="field span-2"><label>Catatan Panitia</label><textarea id="ppdb-notes" rows="3" placeholder="Catatan verifikasi / alasan penolakan…">${U.esc(a.notes || '')}</textarea></div>
+                <div class="field span-2"><label>Ubah Status</label>
+                  <select id="ppdb-status-select">
+                    ${['menunggu', 'diverifikasi', 'diterima', 'ditolak'].map(x => `<option value="${x}" ${a.status === x ? 'selected' : ''}>${x}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal__foot">
+              <a class="btn btn--outline" href="${U.esc(U.waLink(a.parent_phone, 'Assalamualaikum, terkait pendaftaran ' + a.reg_number + ' (' + a.full_name + ')…'))}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>Hubungi Wali</a>
+              <button class="btn btn--primary" data-save-status><i data-lucide="save"></i>Simpan Status &amp; Catatan</button>
+            </div>
+          </div>`;
+        document.body.appendChild(ov);
+        U.refreshIcons(ov);
+        ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-close]')) ov.remove(); });
+        ov.querySelector('[data-save-status]').addEventListener('click', async () => {
+          try {
+            await Store.update('admissions', a.id, {
+              status: ov.querySelector('#ppdb-status-select').value,
+              notes: ov.querySelector('#ppdb-notes').value.trim(),
+            });
+            U.logActivity('Update status PPDB', a.reg_number + ' \u2192 ' + ov.querySelector('#ppdb-status-select').value);
+            U.toast('Status pendaftar diperbarui');
+            ov.remove(); load();
+          } catch (err) { U.toast('Gagal: ' + err.message, 'error'); }
+        });
+      }
+
+      document.getElementById('ppdb-tbody').addEventListener('click', async (e) => {
+        const view = e.target.closest('[data-view]');
+        const verify = e.target.closest('[data-verify]');
+        const del = e.target.closest('[data-del]');
+        if (view) {
+          const a = (await Store.get('admissions', view.dataset.view));
+          if (a) openDetail(a);
+        }
+        if (verify) {
+          const a = await Store.get('admissions', verify.dataset.verify);
+          if (!a) return;
+          const next = a.status === 'diverifikasi' ? 'menunggu' : 'diverifikasi';
+          await Store.update('admissions', a.id, { status: next, verified: next === 'diverifikasi' });
+          U.logActivity('Verifikasi berkas PPDB', a.reg_number);
+          U.toast(`${a.reg_number} \u2192 ${next}`);
+          load();
+        }
+        if (del) {
+          const a = await Store.get('admissions', del.dataset.del);
+          if (!a) return;
+          if (await U.confirm({ title: 'Hapus Pendaftar', message: `Hapus pendaftaran ${a.full_name} (${a.reg_number})?`, okText: 'Hapus' })) {
+            await Store.remove('admissions', a.id);
+            U.logActivity('Hapus pendaftar PPDB', a.reg_number);
+            U.toast('Data pendaftar dihapus');
+            load();
+          }
+        }
+      });
+
+      /* Ekspor */
+      document.getElementById('btn-export').addEventListener('click', async () => {
+        const rows = (await Store.list('admissions', { orderBy: 'created_at', orderDir: 'desc', perPage: 0 })).rows;
+        U.csvDownload('ppdb_' + (Admin.settings.ppdb_tahun_ajaran || '').replace('/', '-') + '.csv', [
+          ['No. Registrasi', 'Nama', 'NISN', 'JK', 'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'Asal Sekolah', 'Jenjang', 'Asrama', 'Orang Tua', 'HP', 'Email', 'Status', 'Catatan', 'Tanggal Daftar'],
+          ...rows.map(a => [a.reg_number, a.full_name, a.nisn, a.gender, a.birth_place, a.birth_date, a.address, a.previous_school, a.jenjang, a.asrama ? 'Ya' : 'Tidak', a.parent_name, a.parent_phone, a.parent_email, a.status, a.notes, a.created_at]),
+        ]);
+      });
+      document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+      load();
+    })();
+  </script>
+</body>
+</html>

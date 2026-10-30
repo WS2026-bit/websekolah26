@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Kelola Agenda — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div id="agenda-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'agenda', title: 'Agenda Kegiatan' })) return;
+      U.refreshIcons();
+
+      Admin.table('agenda-table', {
+        table: 'events', title: 'Agenda',
+        searchKeys: ['title', 'description'],
+        filters: [{ key: 'category', label: 'Kategori', options: [
+          { v: 'Akademik', l: 'Akademik' }, { v: 'Kesiswaan', l: 'Kesiswaan' }, { v: 'Kesantrian', l: 'Kesantrian' },
+          { v: 'PPDB', l: 'PPDB' }, { v: 'Umum', l: 'Umum' },
+        ]}],
+        defaultSort: { key: 'date', dir: 'desc' },
+        columns: [
+          { key: 'title', label: 'Agenda', type: 'main', sub: 'location' },
+          { key: 'date', label: 'Tanggal', type: 'date' },
+          { key: 'category', label: 'Kategori' },
+        ],
+        fields: [
+          { key: 'title', label: 'Nama Agenda', required: true, min: 5 },
+          { key: 'date', label: 'Tanggal Mulai', type: 'date', required: true },
+          { key: 'end_date', label: 'Tanggal Selesai (opsional)', type: 'date' },
+          { key: 'category', label: 'Kategori', type: 'select', required: true, options: [
+            { v: 'Akademik', l: 'Akademik' }, { v: 'Kesiswaan', l: 'Kesiswaan' }, { v: 'Kesantrian', l: 'Kesantrian' },
+            { v: 'PPDB', l: 'PPDB' }, { v: 'Umum', l: 'Umum' }] },
+          { key: 'location', label: 'Lokasi', placeholder: 'mis. Aula Utama' },
+          { key: 'description', label: 'Deskripsi', type: 'textarea', required: true, min: 10 },
+        ],
+      });
+    })();
+  </script>
+</body>
+</html>

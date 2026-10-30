@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Pengaturan — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div class="atabs">
+          <button class="atab active" data-tab="identitas"><i data-lucide="school"></i>Identitas &amp; Kontak</button>
+          <button class="atab" data-tab="ppdb"><i data-lucide="user-plus"></i>Info PPDB</button>
+          <button class="atab" data-tab="tampilan"><i data-lucide="palette"></i>Logo &amp; Banner</button>
+          <button class="atab" data-tab="seo"><i data-lucide="search-check"></i>SEO &amp; Analitik</button>
+          <button class="atab" data-tab="alumni"><i data-lucide="graduation-cap"></i>Sebaran Alumni</button>
+          <button class="atab" data-tab="faq"><i data-lucide="circle-help"></i>FAQ</button>
+          <button class="atab" data-tab="pesan"><i data-lucide="mail"></i>Pesan Masuk <span class="badge badge--red" id="unread-badge" style="display:none">0</span></button>
+          <button class="atab" data-tab="pengguna"><i data-lucide="users"></i>Pengguna</button>
+          <button class="atab" data-tab="log"><i data-lucide="scroll-text"></i>Log Aktivitas</button>
+        </div>
+
+        <div id="tab-identitas">
+          <div class="section-card">
+            <h3><i data-lucide="phone"></i>Kontak &amp; Media Sosial</h3>
+            <div id="form-identitas"></div>
+          </div>
+        </div>
+
+        <div id="tab-ppdb" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="settings-2"></i>Status &amp; Jadwal PPDB</h3>
+            <div id="form-ppdb"></div>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="calendar-range"></i>Gelombang Pendaftaran</h3>
+            <div id="editor-gelombang"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save-ppdb="ppdb_gelombang"><i data-lucide="save"></i>Simpan Gelombang</button>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="clipboard-list"></i>Persyaratan</h3>
+            <div id="editor-persyaratan"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save-ppdb="ppdb_persyaratan"><i data-lucide="save"></i>Simpan Persyaratan</button>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="calendar-clock"></i>Jadwal Seleksi</h3>
+            <div id="editor-jadwal"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save-ppdb="ppdb_jadwal"><i data-lucide="save"></i>Simpan Jadwal</button>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="wallet"></i>Tabel Biaya Pendidikan</h3>
+            <div id="editor-biaya"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save-ppdb="ppdb_biaya"><i data-lucide="save"></i>Simpan Biaya</button>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="list-ordered"></i>Alur Pendaftaran (7 langkah)</h3>
+            <div id="editor-alur"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save-ppdb="ppdb_alur"><i data-lucide="save"></i>Simpan Alur</button>
+          </div>
+        </div>
+
+        <div id="tab-tampilan" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="image"></i>Logo, Favicon &amp; Banner Beranda</h3>
+            <div id="form-tampilan"></div>
+          </div>
+        </div>
+
+        <div id="tab-seo" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="search-check"></i>Meta &amp; Analitik</h3>
+            <div id="form-seo"></div>
+          </div>
+        </div>
+
+        <div id="tab-alumni" style="display:none">
+          <div class="mode-note"><i data-lucide="graduation-cap"></i><span>Data di bagian ini tampil sebagai seksi <b>“Sebaran Alumni”</b> pada Beranda dan halaman Profil — bukti mutu lulusan bagi pengunjung website.</span></div>
+          <div class="section-card">
+            <h3><i data-lucide="target"></i>Statistik Keberhasilan Lulusan</h3>
+            <div id="form-alumni"></div>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="map-pin"></i>Kampus Tujuan Lulusan</h3>
+            <div id="editor-universities"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save-alumni="alumni_universities"><i data-lucide="save"></i>Simpan Kampus Tujuan</button>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="pie-chart"></i>Distribusi Karier Alumni</h3>
+            <div id="editor-career"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save-alumni="alumni_career"><i data-lucide="save"></i>Simpan Distribusi Karier</button>
+          </div>
+        </div>
+
+        <div id="tab-faq" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="circle-help"></i>Manajemen FAQ</h3>
+            <div id="faq-table"></div>
+          </div>
+        </div>
+
+        <div id="tab-pesan" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="mail"></i>Pesan Masuk dari Website</h3>
+            <div id="messages-list"></div>
+          </div>
+        </div>
+
+        <div id="tab-pengguna" style="display:none">
+          <div class="mode-note"><i data-lucide="shield-check"></i><span>Peran <b>admin</b> mengakses seluruh modul termasuk pengaturan; <b>editor</b> hanya modul konten. Password disimpan sebagai hash — mode produksi menggunakan Supabase Auth.</span></div>
+          <div class="section-card">
+            <h3><i data-lucide="users"></i>Manajemen Pengguna Dashboard</h3>
+            <div id="users-table"></div>
+          </div>
+        </div>
+
+        <div id="tab-log" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="scroll-text"></i>Log Aktivitas Admin</h3>
+            <div class="flex justify-between items-center mb-2">
+              <span class="small muted" id="log-info"></span>
+              <button class="btn btn--outline btn--sm" id="btn-clear-log"><i data-lucide="eraser"></i>Bersihkan Log</button>
+            </div>
+            <div class="atable-wrap"><table class="atable">
+              <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Detail</th></tr></thead>
+              <tbody id="log-tbody"></tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'pengaturan', title: 'Pengaturan Website', roles: ['admin'] })) return;
+      U.refreshIcons();
+      const S = Admin.settings;
+
+      /* ---- Tabs (dukung ?tab=) ---- */
+      const openTab = (name) => {
+        const b = document.querySelector(`.atab[data-tab="${name}"]`) || document.querySelector('.atab');
+        b?.click();
+      };
+      document.querySelector('.atabs').addEventListener('click', (e) => {
+        const b = e.target.closest('.atab'); if (!b) return;
+        document.querySelectorAll('.atab').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.querySelectorAll('[id^="tab-"]').forEach(x => x.style.display = 'none');
+        document.getElementById('tab-' + b.dataset.tab).style.display = 'block';
+        U.refreshIcons();
+      });
+      openTab(U.getParam('tab') || 'identitas');
+
+      /* ---- IDENTITAS & KONTAK ---- */
+      Admin.settingsForm('form-identitas', {
+        values: S,
+        fields: [
+          { key: 'address', label: 'Alamat Lengkap', full: true },
+          { key: 'phone', label: 'Telepon' },
+          { key: 'whatsapp', label: 'WhatsApp (format 62xxx)' },
+          { key: 'email', label: 'Email' },
+          { key: 'ppdb_email', label: 'Email Panitia PPDB' },
+          { key: 'maps_embed', label: 'URL Embed Google Maps', full: true, help: 'Gunakan format https://www.google.com/maps?q=...&output=embed' },
+          { key: 'instagram', label: 'Instagram' },
+          { key: 'facebook', label: 'Facebook' },
+          { key: 'youtube', label: 'YouTube' },
+          { key: 'tiktok', label: 'TikTok' },
+        ],
+      });
+
+      /* ---- PPDB ---- */
+      Admin.settingsForm('form-ppdb', {
+        values: {
+          ppdb_tahun_ajaran: S.ppdb_tahun_ajaran,
+          ppdb_open: S.ppdb_open,
+          ppdb_kontak: S.ppdb_kontak,
+          ppdb_wa_panitia: S.ppdb_wa_panitia,
+        },
+        fields: [
+          { key: 'ppdb_tahun_ajaran', label: 'Tahun Ajaran' },
+          { key: 'ppdb_open', label: 'Pendaftaran dibuka' },
+          { key: 'ppdb_kontak', label: 'Alamat Panitia', full: true },
+          { key: 'ppdb_wa_panitia', label: 'WhatsApp Panitia (62xxx)' },
+        ],
+      });
+      const edGel = Admin.listEditor('editor-gelombang',
+        [{ key: 'nama', label: 'Nama gelombang' }, { key: 'mulai', label: 'Mulai (YYYY-MM-DD)' }, { key: 'selesai', label: 'Selesai (YYYY-MM-DD)' }],
+        { values: S.ppdb_gelombang || [], addLabel: 'Tambah Gelombang' });
+      const edReq = Admin.listEditor('editor-persyaratan', [{ key: 'v', label: 'Butir persyaratan' }], { values: (S.ppdb_persyaratan || []).map(x => ({ v: x })), addLabel: 'Tambah Persyaratan' });
+      const edJadwal = Admin.listEditor('editor-jadwal', [{ key: 'v', label: 'Keterangan jadwal' }], { values: (S.ppdb_jadwal || []).map(x => ({ v: x })), addLabel: 'Tambah Jadwal' });
+      const edBiaya = Admin.listEditor('editor-biaya',
+        [{ key: 'jenjang', label: 'Jenjang' }, { key: 'ppdb', label: 'Biaya PPDB', type: 'number' }, { key: 'spp', label: 'SPP/bulan', type: 'number' }, { key: 'ket', label: 'Keterangan' }],
+        { values: S.ppdb_biaya || [], addLabel: 'Tambah Baris Biaya' });
+      const edAlur = Admin.listEditor('editor-alur',
+        [{ key: 't', label: 'Judul langkah' }, { key: 'd', label: 'Deskripsi' }],
+        { values: S.ppdb_alur || [], addLabel: 'Tambah Langkah' });
+
+      document.querySelectorAll('[data-save-ppdb]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const k = btn.dataset.savePpdb;
+          const original = btn.innerHTML;
+          btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2"></i>Menyimpan…'; U.refreshIcons(btn);
+          try {
+            const patch = {};
+            if (k === 'ppdb_gelombang') patch[k] = edGel.get();
+            if (k === 'ppdb_persyaratan') patch[k] = edReq.get();
+            if (k === 'ppdb_jadwal') patch[k] = edJadwal.get();
+            if (k === 'ppdb_biaya') patch[k] = edBiaya.get();
+            if (k === 'ppdb_alur') patch[k] = edAlur.get();
+            await Store.saveSettings(patch);
+            U.logActivity('Update Info PPDB', k);
+            U.toast('Info PPDB (' + k + ') tersimpan');
+            Admin.settings = await Store.getSettings();
+          } catch (err) { U.toast('Gagal: ' + err.message, 'error'); }
+          btn.disabled = false; btn.innerHTML = original; U.refreshIcons(btn);
+        });
+      });
+
+      /* ---- TAMPILAN ---- */
+      Admin.settingsForm('form-tampilan', {
+        values: S,
+        fields: [
+          { key: 'logo', label: 'Logo (SVG/PNG)', type: 'image' },
+          { key: 'favicon', label: 'Favicon', type: 'image' },
+          { key: 'hero_image', label: 'Banner Hero Beranda', type: 'image', full: true },
+          { key: 'hero_badge', label: 'Lencana Hero' },
+          { key: 'hero_title', label: 'Judul Hero' },
+          { key: 'hero_subtitle', label: 'Subjudul Hero', type: 'textarea', full: true, rows: 3 },
+        ],
+      });
+
+      /* ---- SEO ---- */
+      Admin.settingsForm('form-seo', {
+        values: S,
+        fields: [
+          { key: 'seo_title', label: 'Meta Title', full: true },
+          { key: 'seo_description', label: 'Meta Description', type: 'textarea', full: true, rows: 3 },
+          { key: 'seo_keywords', label: 'Meta Keywords (pisahkan koma)', full: true },
+          { key: 'ga_id', label: 'Google Analytics ID (opsional)', placeholder: 'G-XXXXXXXXXX' },
+        ],
+      });
+
+      /* ---- SEBARAN ALUMNI ---- */
+      Admin.settingsForm('form-alumni', {
+        values: {
+          alumni_lanjut_pct: S.alumni_lanjut_pct,
+          alumni_ptn_pct: S.alumni_ptn_pct,
+          alumni_luar_pct: S.alumni_luar_pct,
+          alumni_hafiz_pct: S.alumni_hafiz_pct,
+          alumni_note: S.alumni_note,
+        },
+        customSave: async (data) => {
+          ['alumni_lanjut_pct', 'alumni_ptn_pct', 'alumni_luar_pct', 'alumni_hafiz_pct'].forEach(k => {
+            const n = Number(data[k]);
+            if (Number.isNaN(n) || n < 0 || n > 100) throw new Error('Persentase harus angka 0–100: ' + data[k]);
+            data[k] = n;
+          });
+          await Store.saveSettings(data);
+          U.logActivity('Update Sebaran Alumni', 'statistik persentase');
+        },
+        fields: [
+          { key: 'alumni_lanjut_pct', label: 'Lanjut ke Perguruan Tinggi (%)', type: 'number' },
+          { key: 'alumni_ptn_pct', label: 'Diterima PTN Favorit (%)', type: 'number' },
+          { key: 'alumni_luar_pct', label: 'Kampus Luar Negeri (%)', type: 'number' },
+          { key: 'alumni_hafiz_pct', label: 'Lulusan Hafizh/Tahfizh (%)', type: 'number' },
+          { key: 'alumni_note', label: 'Catatan Sumber Data (tampil kecil di bawah seksi)', type: 'textarea', full: true, rows: 2 },
+        ],
+      });
+      const edUniv = Admin.listEditor('editor-universities',
+        [{ key: 'name', label: 'Nama perguruan tinggi' }, { key: 'count', label: 'Jumlah alumni', type: 'number' },
+         { key: 'type', label: 'Wilayah', type: 'select', options: [{ v: 'dalam', l: 'Dalam Negeri' }, { v: 'luar', l: 'Luar Negeri' }] }],
+        { values: S.alumni_universities || [], addLabel: 'Tambah Kampus' });
+      const edCareer = Admin.listEditor('editor-career',
+        [{ key: 'label', label: 'Kategori karier' }, { key: 'pct', label: 'Persentase (%)', type: 'number' }],
+        { values: S.alumni_career || [], addLabel: 'Tambah Kategori' });
+
+      document.querySelectorAll('[data-save-alumni]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const k = btn.dataset.saveAlumni;
+          const original = btn.innerHTML;
+          btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2"></i>Menyimpan…'; U.refreshIcons(btn);
+          try {
+            const rows = k === 'alumni_universities' ? edUniv.get() : edCareer.get();
+            const invalid = rows.find(r => (k === 'alumni_universities' ? (!String(r.name).trim() || !(Number(r.count) >= 0)) : (!String(r.label).trim() || !(Number(r.pct) >= 0 && Number(r.pct) <= 100))));
+            if (invalid) throw new Error('Lengkapi data baris: nama kategori/kampus wajib diisi, angka 0–100 untuk persentase.');
+            await Store.saveSettings({ [k]: rows });
+            U.logActivity('Update Sebaran Alumni', k + ' (' + rows.length + ' baris)');
+            U.toast('Data alumni (' + k + ') tersimpan');
+            Admin.settings = await Store.getSettings();
+          } catch (err) { U.toast('Gagal: ' + err.message, 'error'); }
+          btn.disabled = false; btn.innerHTML = original; U.refreshIcons(btn);
+        });
+      });
+
+      /* ---- FAQ ---- */
+      Admin.table('faq-table', {
+        table: 'faqs', title: 'FAQ',
+        searchKeys: ['question', 'answer'],
+        filters: [{ key: 'category', label: 'Kategori', options: [
+          { v: 'Pendaftaran', l: 'Pendaftaran' }, { v: 'Biaya', l: 'Biaya' }, { v: 'Asrama', l: 'Asrama' },
+          { v: 'Kurikulum', l: 'Kurikulum' }, { v: 'Fasilitas', l: 'Fasilitas' }, { v: 'Umum', l: 'Umum' }] }],
+        defaultSort: { key: 'order', dir: 'asc' },
+        columns: [
+          { key: 'question', label: 'Pertanyaan', type: 'main', sub: 'category' },
+          { key: 'order', label: 'Urutan', type: 'number' },
+        ],
+        fields: [
+          { key: 'question', label: 'Pertanyaan', required: true, min: 8 },
+          { key: 'category', label: 'Kategori', type: 'select', required: true, options: [
+            { v: 'Pendaftaran', l: 'Pendaftaran' }, { v: 'Biaya', l: 'Biaya' }, { v: 'Asrama', l: 'Asrama' },
+            { v: 'Kurikulum', l: 'Kurikulum' }, { v: 'Fasilitas', l: 'Fasilitas' }, { v: 'Umum', l: 'Umum' }] },
+          { key: 'answer', label: 'Jawaban', type: 'textarea', required: true, min: 10 },
+          { key: 'order', label: 'Urutan Tampil', type: 'number' },
+        ],
+      });
+
+      /* ---- PESAN MASUK ---- */
+      async function loadMessages() {
+        const { rows } = await Store.list('messages', { orderBy: 'created_at', orderDir: 'desc' });
+        const unread = rows.filter(m => !m.read).length;
+        const badge = document.getElementById('unread-badge');
+        badge.style.display = unread ? 'inline-flex' : 'none';
+        badge.textContent = unread;
+        const host = document.getElementById('messages-list');
+        host.innerHTML = rows.length ? rows.map(m => `
+          <div class="msg-item ${m.read ? '' : 'unread'}">
+            <div style="flex:1;min-width:0">
+              <div class="msg-title">${U.esc(m.subject)}</div>
+              <div class="msg-meta"><span>${U.esc(m.name)}</span><span>${U.esc(m.email)}</span>${m.phone ? `<span>${U.esc(m.phone)}</span>` : ''}<span>${U.fmtDateTime(m.created_at)}</span></div>
+              <p class="small mt-1" style="color:var(--text-muted)">${U.esc(m.message)}</p>
+              <div class="flex gap-2 mt-1 flex-wrap">
+                <button class="btn btn--outline btn--sm" data-read="${U.esc(m.id)}"><i data-lucide="${m.read ? 'mail-open' : 'mail'}"></i>${m.read ? 'Tandai Belum Dibaca' : 'Tandai Dibaca'}</button>
+                <a class="btn btn--outline btn--sm" href="mailto:${U.esc(m.email)}?subject=Re: ${encodeURIComponent(m.subject)}"><i data-lucide="reply"></i>Balas Email</a>
+                ${m.phone ? `<a class="btn btn--outline btn--sm" href="${U.esc(U.waLink(m.phone))}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>Balas WA</a>` : ''}
+                <button class="btn btn--outline btn--sm" data-del="${U.esc(m.id)}"><i data-lucide="trash-2"></i>Hapus</button>
+              </div>
+            </div>
+          </div>`).join('') : '<p class="muted small">Belum ada pesan masuk.</p>';
+        U.refreshIcons(host);
+      }
+      document.getElementById('messages-list').addEventListener('click', async (e) => {
+        const r = e.target.closest('[data-read]');
+        const d = e.target.closest('[data-del]');
+        if (r) {
+          const m = await Store.get('messages', r.dataset.read);
+          await Store.update('messages', m.id, { read: !m.read });
+          loadMessages();
+        }
+        if (d && await U.confirm({ title: 'Hapus Pesan', message: 'Hapus pesan ini secara permanen?', okText: 'Hapus' })) {
+          await Store.remove('messages', d.dataset.del);
+          U.toast('Pesan dihapus');
+          loadMessages();
+        }
+      });
+      loadMessages();
+
+      /* ---- PENGGUNA ---- */
+      Admin.table('users-table', {
+        table: 'users', title: 'Pengguna',
+        searchKeys: ['name', 'email'],
+        columns: [
+          { key: 'name', label: 'Nama', type: 'main', sub: 'email' },
+          { key: 'role', label: 'Peran', type: 'badge', badgeMap: { admin: 'badge--gold', editor: 'badge--green' } },
+          { key: 'created_at', label: 'Dibuat', type: 'date' },
+        ],
+        fields: [
+          { key: 'name', label: 'Nama', required: true },
+          { key: 'email', label: 'Email', required: true, type: 'email' },
+          { key: 'role', label: 'Peran', type: 'select', required: true, options: [{ v: 'admin', l: 'Administrator' }, { v: 'editor', l: 'Editor' }] },
+          { key: 'password', label: 'Password (isi untuk mengubah)', help: 'Kosongkan jika tidak ingin mengubah. Disimpan sebagai hash SHA-256.' },
+        ],
+        beforeSave: async (payload) => {
+          if (payload.password) {
+            payload.password = await U.sha256(payload.password);
+          } else {
+            delete payload.password;
+          }
+          if (Store.mode === 'supabase') delete payload.password; // produksi via Supabase Auth
+          return payload;
+        },
+      });
+
+      /* ---- LOG AKTIVITAS ---- */
+      async function loadLogs() {
+        const { rows } = await Store.list('activity_logs', { orderBy: 'created_at', orderDir: 'desc', perPage: 100 });
+        document.getElementById('log-info').textContent = `${rows.length} aktivitas tercatat (100 terakhir)`;
+        document.getElementById('log-tbody').innerHTML = rows.length ? rows.map(l => `
+          <tr><td style="white-space:nowrap">${U.fmtDateTime(l.created_at)}</td>
+          <td><b>${U.esc(l.user || '-')}</b></td><td>${U.esc(l.action)}</td><td><span class="cell-sub" style="white-space:normal">${U.esc(l.detail || '')}</span></td></tr>`).join('')
+          : '<tr><td colspan="4" style="padding:30px;text-align:center;color:var(--text-muted)">Belum ada aktivitas tercatat.</td></tr>';
+      }
+      document.getElementById('btn-clear-log').addEventListener('click', async () => {
+        if (!(await U.confirm({ title: 'Bersihkan Log', message: 'Hapus seluruh riwayat log aktivitas?', okText: 'Bersihkan' }))) return;
+        const { rows } = await Store.list('activity_logs', { perPage: 0 });
+        for (const r of rows) await Store.remove('activity_logs', r.id);
+        U.toast('Log dibersihkan');
+        loadLogs();
+      });
+      loadLogs();
+    })();
+  </script>
+</body>
+</html>

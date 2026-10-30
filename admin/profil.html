@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Profil Sekolah — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div class="atabs">
+          <button class="atab active" data-tab="umum"><i data-lucide="building-2"></i>Profil &amp; Sambutan</button>
+          <button class="atab" data-tab="vm"><i data-lucide="eye"></i>Visi, Misi &amp; Nilai</button>
+          <button class="atab" data-tab="sejarah"><i data-lucide="history"></i>Sejarah</button>
+          <button class="atab" data-tab="struktur"><i data-lucide="network"></i>Struktur Organisasi</button>
+          <button class="atab" data-tab="fasilitas"><i data-lucide="warehouse"></i>Fasilitas</button>
+          <button class="atab" data-tab="testimoni"><i data-lucide="quote"></i>Testimoni</button>
+          <button class="atab" data-tab="statistik"><i data-lucide="chart-column"></i>Statistik</button>
+        </div>
+
+        <div id="tab-umum">
+          <div class="section-card">
+            <h3><i data-lucide="info"></i>Identitas &amp; Profil Singkat</h3>
+            <div id="form-umum"></div>
+          </div>
+        </div>
+
+        <div id="tab-vm" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="eye"></i>Visi</h3>
+            <div id="form-vision"></div>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="target"></i>Misi</h3>
+            <div id="editor-missions"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save="missions"><i data-lucide="save"></i>Simpan Misi</button>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="crosshair"></i>Tujuan Pendidikan</h3>
+            <div id="editor-goals"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save="goals"><i data-lucide="save"></i>Simpan Tujuan</button>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="gem"></i>Nilai-Nilai Organisasi</h3>
+            <div id="editor-values"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save="values"><i data-lucide="save"></i>Simpan Nilai</button>
+          </div>
+        </div>
+
+        <div id="tab-sejarah" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="history"></i>Narasi Sejarah</h3>
+            <div id="form-history"></div>
+          </div>
+          <div class="section-card">
+            <h3><i data-lucide="milestone"></i>Garis Waktu (Milestone)</h3>
+            <div id="editor-milestones"></div>
+            <button type="button" class="btn btn--primary mt-2" data-save="milestones"><i data-lucide="save"></i>Simpan Milestone</button>
+          </div>
+        </div>
+
+        <div id="tab-struktur" style="display:none">
+          <div class="mode-note"><i data-lucide="info"></i><span>Posisi dengan <b>Atasan kosong</b> menjadi akar bagan organisasi. Gunakan "Urutan" untuk mengatur tampilan.</span></div>
+          <div class="section-card">
+            <h3><i data-lucide="network"></i>Manajemen Struktur Organisasi</h3>
+            <div id="org-table"></div>
+          </div>
+        </div>
+
+        <div id="tab-fasilitas" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="warehouse"></i>Manajemen Fasilitas</h3>
+            <div id="fac-table"></div>
+          </div>
+        </div>
+
+        <div id="tab-testimoni" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="quote"></i>Manajemen Testimoni</h3>
+            <div id="tst-table"></div>
+          </div>
+        </div>
+
+        <div id="tab-statistik" style="display:none">
+          <div class="section-card">
+            <h3><i data-lucide="chart-column"></i>Angka Statistik Beranda</h3>
+            <p class="small muted mb-3">Angka ini tampil pada pita statistik di halaman beranda.</p>
+            <div id="form-stats"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'profil', title: 'Profil & Visi Misi' })) return;
+      U.refreshIcons();
+      let S = Admin.settings;
+
+      const saveSettings = async (patch, label) => {
+        await Store.saveSettings(patch);
+        U.logActivity('Update Profil Sekolah', label);
+        U.toast(label + ' berhasil disimpan');
+        S = Admin.settings = await Store.getSettings();
+      };
+
+      /* Tabs */
+      document.querySelector('.atabs').addEventListener('click', (e) => {
+        const b = e.target.closest('.atab'); if (!b) return;
+        document.querySelectorAll('.atab').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.querySelectorAll('[id^="tab-"]').forEach(x => x.style.display = 'none');
+        document.getElementById('tab-' + b.dataset.tab).style.display = 'block';
+        U.refreshIcons();
+      });
+
+      /* UMUM */
+      Admin.settingsForm('form-umum', {
+        values: S,
+        fields: [
+          { key: 'school_name', label: 'Nama Sekolah' },
+          { key: 'short_name', label: 'Nama Singkat' },
+          { key: 'tagline', label: 'Tagline' },
+          { key: 'jenjang', label: 'Jenjang (tampil di header)' },
+          { key: 'npsn', label: 'NPSN' },
+          { key: 'akreditasi', label: 'Akreditasi' },
+          { key: 'about_short', label: 'Profil Singkat (beranda)', type: 'textarea', full: true, rows: 5 },
+          { key: 'headmaster_name', label: 'Nama Kepala Sekolah' },
+          { key: 'headmaster_title', label: 'Jabatan' },
+          { key: 'headmaster_photo', label: 'Foto Kepala Sekolah', type: 'image' },
+          { key: 'headmaster_greeting', label: 'Isi Sambutan (HTML)', type: 'html', rows: 8 },
+        ],
+      });
+
+      /* VISI */
+      Admin.settingsForm('form-vision', {
+        values: S,
+        fields: [{ key: 'vision', label: 'Teks Visi', type: 'textarea', full: true, rows: 3 }],
+      });
+
+      /* MISI */
+      const edMissions = Admin.listEditor('editor-missions', [{ key: 'v', label: 'Butir misi' }], { values: (S.missions || []).map(g => ({ v: g })), addLabel: 'Tambah Butir Misi' });
+      const edGoals = Admin.listEditor('editor-goals', [{ key: 'v', label: 'Tujuan' }], { values: (S.goals || []).map(g => ({ v: g })), addLabel: 'Tambah Tujuan' });
+      const edValues = Admin.listEditor('editor-values', [{ key: 'name', label: 'Nama Nilai' }, { key: 'desc', label: 'Deskripsi' }], { values: S.values || [], addLabel: 'Tambah Nilai' });
+      const edMilestones = Admin.listEditor('editor-milestones', [{ key: 'year', label: 'Tahun', type: 'number' }, { key: 'text', label: 'Peristiwa' }], { values: S.milestones || [], addLabel: 'Tambah Milestone' });
+
+      document.querySelectorAll('[data-save]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const k = btn.dataset.save;
+          const original = btn.innerHTML;
+          btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2"></i>Menyimpan…'; U.refreshIcons(btn);
+          try {
+            if (k === 'missions') await saveSettings({ missions: edMissions.get() }, 'Misi');
+            if (k === 'goals') await saveSettings({ goals: edGoals.get() }, 'Tujuan pendidikan');
+            if (k === 'values') await saveSettings({ values: edValues.get() }, 'Nilai organisasi');
+            if (k === 'milestones') await saveSettings({ milestones: edMilestones.get() }, 'Milestone sejarah');
+          } catch (err) { U.toast('Gagal: ' + err.message, 'error'); }
+          btn.disabled = false; btn.innerHTML = original; U.refreshIcons(btn);
+        });
+      });
+
+      /* SEJARAH */
+      Admin.settingsForm('form-history', {
+        values: S,
+        fields: [{ key: 'history', label: 'Narasi Sejarah (pisahkan paragraf dengan baris kosong)', type: 'textarea', full: true, rows: 10 }],
+      });
+
+      /* STRUKTUR */
+      const orgs = (await Store.list('organization', { orderBy: 'order', orderDir: 'asc' })).rows;
+      Admin.table('org-table', {
+        table: 'organization', title: 'Struktur',
+        searchKeys: ['name', 'position'],
+        defaultSort: { key: 'order', dir: 'asc' },
+        columns: [
+          { key: 'name', label: 'Nama', type: 'main', sub: 'position' },
+          { key: 'parent_id', label: 'Atasan', render: r => U.esc(orgs.find(o => o.id === r.parent_id)?.position || '(Puncak)') },
+          { key: 'order', label: 'Urutan', type: 'number' },
+        ],
+        fields: [
+          { key: 'name', label: 'Nama', required: true },
+          { key: 'position', label: 'Jabatan', required: true },
+          { key: 'parent_id', label: 'Atasan', type: 'select', placeholder: '(Puncak / tanpa atasan)', options: orgs.map(o => ({ v: o.id, l: o.position + ' \u2014 ' + o.name })) },
+          { key: 'order', label: 'Urutan Tampil', type: 'number' },
+          { key: 'photo', label: 'Foto', type: 'image' },
+        ],
+      });
+
+      /* FASILITAS */
+      Admin.table('fac-table', {
+        table: 'facilities', title: 'Fasilitas',
+        searchKeys: ['name', 'description'],
+        columns: [
+          { key: 'image', label: 'Gambar', type: 'image' },
+          { key: 'name', label: 'Fasilitas', type: 'main', sub: 'description' },
+          { key: 'icon', label: 'Ikon' },
+        ],
+        fields: [
+          { key: 'name', label: 'Nama Fasilitas', required: true },
+          { key: 'icon', label: 'Ikon (Lucide)', placeholder: 'mis. library, flask-conical' },
+          { key: 'image', label: 'Gambar (opsional)', type: 'image' },
+          { key: 'description', label: 'Deskripsi', type: 'textarea', required: true, min: 10 },
+        ],
+      });
+
+      /* TESTIMONI */
+      Admin.table('tst-table', {
+        table: 'testimonials', title: 'Testimoni',
+        searchKeys: ['name', 'message'],
+        columns: [
+          { key: 'name', label: 'Nama', type: 'main', sub: 'role' },
+          { key: 'message', label: 'Isi', render: r => `<span class="cell-sub" style="max-width:380px;white-space:normal">${U.esc(U.truncate(r.message, 110))}</span>` },
+          { key: 'rating', label: 'Rating', type: 'number' },
+        ],
+        fields: [
+          { key: 'name', label: 'Nama', required: true },
+          { key: 'role', label: 'Keterangan (mis. Orang Tua Santri)', required: true },
+          { key: 'rating', label: 'Rating (1\u20135)', type: 'number', required: true },
+          { key: 'photo', label: 'Foto (opsional)', type: 'image' },
+          { key: 'message', label: 'Isi Testimoni', type: 'textarea', required: true, min: 20 },
+        ],
+      });
+
+      /* STATISTIK */
+      Admin.settingsForm('form-stats', {
+        values: { students: S.stats?.students ?? 0, teachers: S.stats?.teachers ?? 0, alumni: S.stats?.alumni ?? 0, achievements: S.stats?.achievements ?? 0 },
+        fields: [
+          { key: 'students', label: 'Jumlah Siswa Aktif', type: 'number' },
+          { key: 'teachers', label: 'Jumlah Guru & Staf', type: 'number' },
+          { key: 'alumni', label: 'Jumlah Alumni', type: 'number' },
+          { key: 'achievements', label: 'Jumlah Prestasi', type: 'number' },
+        ],
+        customSave: async (data) => {
+          const stats = {};
+          Object.entries(data).forEach(([k, v]) => stats[k] = Number(v) || 0);
+          await Store.saveSettings({ stats });
+          U.logActivity('Update Statistik', JSON.stringify(stats));
+          U.toast('Statistik berhasil disimpan');
+        },
+      });
+    })();
+  </script>
+</body>
+</html>

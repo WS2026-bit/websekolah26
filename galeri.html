@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Galeri foto dan video kegiatan SIT Al-Ihsan dengan lightbox dan filter kategori dokumentasi.">
+  <meta property="og:title" content="Galeri — SIT Al-Ihsan">
+  <meta property="og:type" content="website">
+  <title>Galeri — SIT Al-Ihsan</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="galeri">
+
+  <header id="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero__bg"><img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/62d313ea343b.jpg" alt="" loading="lazy"></div>
+      <div class="container">
+        <div id="page-breadcrumb"></div>
+        <h1>Galeri</h1>
+        <p>Dokumentasi foto dan video kegiatan, fasilitas, dan prestasi.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="gfilters" id="gallery-filters" role="tablist" aria-label="Filter galeri"></div>
+        <div class="ggrid" id="gallery-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Pratinjau media">
+    <div class="lightbox__inner">
+      <button class="lightbox__close" aria-label="Tutup"><i data-lucide="x"></i></button>
+      <div class="lightbox__media"></div>
+      <div class="lightbox__cap"></div>
+      <div class="lightbox__nav">
+        <button data-prev aria-label="Sebelumnya"><i data-lucide="chevron-left"></i></button>
+        <button data-next aria-label="Berikutnya"><i data-lucide="chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <footer id="site-footer"></footer>
+
+  <script src="config/supabase.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data-seed.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () =>
+      Pages.boot({ page: 'galeri', pageTitle: 'Galeri', breadcrumb: [{ label: 'Galeri' }] }));
+  </script>
+</body>
+</html>

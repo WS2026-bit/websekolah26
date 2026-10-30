@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Kelola Prestasi — Admin SIT Al-Ihsan</title>
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="admin">
+
+  <div class="admin">
+    <aside class="sidebar" id="admin-sidebar"></aside>
+    <div class="main">
+      <div class="topbar" id="admin-topbar"></div>
+      <div class="content">
+        <div id="ach-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config/supabase.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/data-seed.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script src="https://unpkg.com/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+  <script>
+    (async () => {
+      if (!await Admin.boot({ active: 'prestasi', title: 'Prestasi' })) return;
+      U.refreshIcons();
+
+      Admin.table('ach-table', {
+        table: 'achievements', title: 'Prestasi',
+        searchKeys: ['title', 'student_name', 'description'],
+        filters: [
+          { key: 'level', label: 'Tingkat', options: [{ v: 'daerah', l: 'Daerah' }, { v: 'nasional', l: 'Nasional' }, { v: 'internasional', l: 'Internasional' }] },
+          { key: 'type', label: 'Jenis', options: [{ v: 'akademik', l: 'Akademik' }, { v: 'non-akademik', l: 'Non-Akademik' }, { v: 'keagamaan', l: 'Keagamaan' }] },
+        ],
+        columns: [
+          { key: 'title', label: 'Prestasi', type: 'main', sub: 'student_name' },
+          { key: 'level', label: 'Tingkat', type: 'badge', badgeMap: { daerah: 'badge--info', nasional: 'badge--green', internasional: 'badge--gold' } },
+          { key: 'type', label: 'Jenis' },
+          { key: 'year', label: 'Tahun' },
+        ],
+        fields: [
+          { key: 'title', label: 'Nama Prestasi', required: true, min: 5 },
+          { key: 'student_name', label: 'Nama Siswa / Tim', required: true },
+          { key: 'level', label: 'Tingkat', type: 'select', required: true, options: [{ v: 'daerah', l: 'Daerah' }, { v: 'nasional', l: 'Nasional' }, { v: 'internasional', l: 'Internasional' }] },
+          { key: 'type', label: 'Jenis', type: 'select', required: true, options: [{ v: 'akademik', l: 'Akademik' }, { v: 'non-akademik', l: 'Non-Akademik' }, { v: 'keagamaan', l: 'Keagamaan' }] },
+          { key: 'year', label: 'Tahun', type: 'number', required: true, min: 2000, max: 2100 },
+          { key: 'image', label: 'Foto Kegiatan', type: 'image' },
+          { key: 'description', label: 'Deskripsi', type: 'textarea', required: true, min: 10 },
+        ],
+      });
+    })();
+  </script>
+</body>
+</html>
