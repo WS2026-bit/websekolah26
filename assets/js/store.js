@@ -172,9 +172,15 @@ const Store = {
     if (!obj.created_at) obj.created_at = new Date().toISOString();
 
     if (this.mode === 'supabase') {
-      const { data, error } = await this.client.from(table).insert(obj).select().single();
+      // SENGAJA TANPA .select(): dengan RLS, INSERT ... RETURNING mewajibkan
+      // baris baru juga lolos policy SELECT. Policy publik memang membatasi
+      // baca (mis. tracer_alumni hanya 'terverifikasi', messages tanpa baca
+      // publik) sehingga .select() membuat kiriman anonim gagal dengan error
+      // "new row violates row-level security policy". id & created_at dibuat
+      // di sisi klien, jadi baris hasil dari server tidak diperlukan.
+      const { error } = await this.client.from(table).insert(obj);
       if (error) throw new Error(error.message);
-      return data;
+      return obj;
     }
     this._db[table] = this._db[table] || [];
     this._db[table].unshift(obj);

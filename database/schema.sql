@@ -407,8 +407,11 @@ alter table public.activity_logs       enable row level security;
 alter table public.tracer_alumni       enable row level security;
 
 -- ---- Helper: peran pengguna saat ini ----
+-- SECURITY DEFINER + search_path terkunci: mencegah "infinite recursion
+-- detected in policy" (fungsi membaca tabel users yang RLS-nya sendiri
+-- memanggil fungsi ini) dan mengikuti rekomendasi linter Supabase.
 create or replace function public.current_role()
-returns text language sql stable as $$
+returns text language sql stable security definer set search_path = public as $$
   select role::text from public.users where id = auth.uid()
 $$;
 

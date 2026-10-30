@@ -76,7 +76,30 @@ Akun demo (`admin@al-ihsan.sch.id`) **tidak berlaku** di mode Supabase — login
 
 3. (Opsional) buat akun kedua peran `editor` — login yang sama, cukup ganti `'admin'` → `'editor'` dan gunakan email lain.
 
-> ❗ **Login berhasil tapi sidebar tertulis "editor"?** Itu bukan soal email/password — status admin ditentukan kolom `role` di tabel `public.users`. Jalankan ulang SQL di atas memakai email yang Anda pakai login, lalu **logout → login kembali** (peran terbaca saat login).
+### A3-b. Status masih "editor"? Perbaikan sekali jadi (tanpa ketik email)
+
+Jalankan **3 perintah ini bersamaan** di **SQL Editor** → Run. Tidak perlu mengganti email apa pun — Supabase membaca sendiri semua akun Auth yang ada:
+
+```sql
+-- 1) Lihat akun Auth & perannya saat ini
+SELECT au.email AS email_auth, u.role AS peran_sekarang
+FROM auth.users au LEFT JOIN public.users u ON u.id = au.id;
+
+-- 2) Promosikan SEMUA akun Auth yang ada sekarang menjadi admin
+INSERT INTO public.users (id, name, email, role)
+SELECT id, 'Administrator', lower(email), 'admin' FROM auth.users
+ON CONFLICT (id) DO UPDATE SET role = 'admin', email = excluded.email;
+
+-- 3) Bersihkan baris yatim (id tidak dikenal Supabase Auth)
+DELETE FROM public.users WHERE id NOT IN (SELECT id FROM auth.users);
+```
+
+Hasil langkah 1–2 idealnya: `email_auth` = email Anda, `peran_sekarang` = `admin`.
+⚠️ Langkah 2 menjadikan **semua** akun Auth yang ada sebagai admin — jalankan hanya saat setup awal. Setelah website berjalan, kelola peran lewat Dashboard (login admin lain) atau per-email.
+
+Terakhir: di dashboard klik **Logout → Login kembali** (peran terbaca saat login), atau tekan `Ctrl+Shift+R`.
+
+> ❗ **Masih "editor" setelah langkah di atas?** Pastikan Anda menjalankan `schema.sql` **terbaru** (versi lama bisa memicu kendala kebijakan RLS pada tabel `users`), lalu ulangi A3-b.
 
 ## A4. Ambil kredensial project
 
@@ -242,14 +265,36 @@ Kalau 5-5-nya lolos → database benar-benar online, tersimpan otomatis, dan lin
 | Sidebar masih "Demo (LocalStorage)" | `enabled` masih `false`, atau key masih placeholder | Periksa `config/supabase.js` (A5), hard-refresh `Ctrl+Shift+R` |
 | Dashboard: "Tabel belum tersedia" | `schema.sql` belum dijalankan / project Supabase paused | Jalankan A2; kalau paused → **Restore project** |
 | Login admin gagal di produksi | User Auth belum dibuat / belum di-link ke `public.users` | Ulangi A3 (email harus sama persis) |
-| Login sukses tapi sidebar tertulis "editor" | Baris `public.users` belum dibuat, atau `role` masih `editor` | Jalankan ulang SQL A3 langkah 2 dengan email login Anda → **logout → login lagi**; cek `SELECT email, role FROM public.users;` |
+| Login sukses tapi sidebar tertulis "editor" | Baris `public.users` belum terhubung ke akun Auth (email tidak persis sama / id beda), atau belum login ulang | Jalankan **A3-b** (perbaikan sekali jadi, tanpa ketik email) → **logout → login lagi**; cek dengan `SELECT email, role FROM public.users;` |
 | `https://user.github.io/repo/` 404 | `index.html` tidak di root repo, atau Pages belum di-Save | Pastikan upload **isi folder** (B1 langkah 4); cek B2 |
 | Halaman tampil tanpa warna/gambar | File terunggah bersarang (`website/index.html`, bukan `index.html`) | Pindahkan isi ke root repo (drag & drop di GitHub web) |
 | Perubahan tidak muncul | Cache browser / Pages masih build | `Ctrl+Shift+R`; tunggu ±1–3 menit |
 | Upload gambar gagal | File > 2 MB / bukan JPG-PNG-WebP-PDF | Kompres dulu; batas memang 2 MB |
 | Supabase "project paused" | Paket gratis berhenti setelah 7 hari tanpa aktivitas | Tekan **Restore** di dashboard Supabase; aktifkan dengan buka website secara rutin |
 | SQL error `23502 … null value in column "created_at"` saat Run schema | Memakai versi `schema.sql` lama (data seed mengisi `created_at` dengan NULL) | Gunakan `database/schema.sql` **terbaru** dari paket ini, salin ulang **seluruh** isinya, klik **Run** sekali lagi — aman karena skrip idempoten dan transaksi yang gagal otomatis di-roll back |
+| Kirim Jejak Alumni / Pesan Kontak gagal: `new row violates row-level security policy` | Memakai `assets/js/store.js` **lama** — insert memakai `.select()` sehingga baris baru (status `menunggu`) ditolak policy SELECT publik | Unggah ulang `assets/js/store.js` **terbaru** ke repo → tunggu deployment → `Ctrl+Shift+R`. Kalau masih gagal, jalankan blok SQL darurat di bawah tabel ini |
 | Ganti password DB Supabase | — | Jangan diubah sembarangan; berdampak koneksi. Kalau terlanjur: Settings → Database → Reset database password tidak mempengaruhi anon key |
+
+**SQL darurat — pastikan policy kirim publik & helper peran terpasang** (idempoten, aman diulang; hanya jika error RLS masih muncul setelah JS terbaru terunggah):
+
+```sql
+create or replace function public.current_role()
+returns text language sql stable security definer set search_path = public as $$
+  select role::text from public.users where id = auth.uid()
+$$;
+
+drop policy if exists "public_insert_tracer" on public.tracer_alumni;
+create policy "public_insert_tracer" on public.tracer_alumni
+  for insert to anon, authenticated with check (true);
+
+drop policy if exists "public_insert_messages" on public.messages;
+create policy "public_insert_messages" on public.messages
+  for insert to anon, authenticated with check (true);
+
+drop policy if exists "public_insert_admissions" on public.admissions;
+create policy "public_insert_admissions" on public.admissions
+  for insert to anon, authenticated with check (true);
+```
 
 ---
 
